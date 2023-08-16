@@ -1,311 +1,653 @@
-const ARBITRUM_NETWORK_ID = 421613;
+const ARBITRUM_NETWORK_ID = 420;
 
 const abi = [
   {
-    anonymous: false,
-    inputs: [
+    "inputs": [
       {
-        indexed: false,
-        internalType: "string",
-        name: "_requestName",
-        type: "string",
-      },
+        "internalType": "contract IEAS",
+        "name": "eas",
+        "type": "address"
+      }
     ],
-    name: "ClosedReviewRequest",
-    type: "event",
+    "stateMutability": "nonpayable",
+    "type": "constructor"
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "_formId",
-        type: "uint256",
-      },
-    ],
-    name: "CreatedReviewForm",
-    type: "event",
+    "inputs": [],
+    "name": "AccessDenied",
+    "type": "error"
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "string",
-        name: "_requestName",
-        type: "string",
-      },
-    ],
-    name: "CreatedReviewRequest",
-    type: "event",
+    "inputs": [],
+    "name": "InsufficientValue",
+    "type": "error"
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "string",
-        name: "_requestName",
-        type: "string",
-      },
-    ],
-    name: "SubmittedReview",
-    type: "event",
+    "inputs": [],
+    "name": "InvalidEAS",
+    "type": "error"
   },
   {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_name",
-        type: "string",
-      },
-    ],
-    name: "closeReviewRequest",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    "inputs": [],
+    "name": "NotPayable",
+    "type": "error"
   },
   {
-    inputs: [],
-    name: "contractVersion",
-    outputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
+        "indexed": false,
+        "internalType": "string",
+        "name": "_requestName",
+        "type": "string"
+      }
     ],
-    stateMutability: "view",
-    type: "function",
+    "name": "ClosedReviewRequest",
+    "type": "event"
   },
   {
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        internalType: "string",
-        name: "_name",
-        type: "string",
-      },
-      {
-        internalType: "address[]",
-        name: "reviewers",
-        type: "address[]",
-      },
-      {
-        internalType: "string[]",
-        name: "targets",
-        type: "string[]",
-      },
-      {
-        internalType: "string[]",
-        name: "targetsIPFSHashes",
-        type: "string[]",
-      },
-      {
-        internalType: "string",
-        name: "formIpfsHash",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "rewardPerReview",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "reviewFormIndex",
-        type: "uint256",
-      },
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_formId",
+        "type": "uint256"
+      }
     ],
-    name: "createRequest",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
+    "name": "CreatedReviewForm",
+    "type": "event"
   },
   {
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        internalType: "string[]",
-        name: "questions",
-        type: "string[]",
-      },
-      {
-        internalType: "string[][]",
-        name: "choices",
-        type: "string[][]",
-      },
-      {
-        internalType: "enum DeresyRequests.QuestionType[]",
-        name: "questionTypes",
-        type: "uint8[]",
-      },
+        "indexed": false,
+        "internalType": "string",
+        "name": "_requestName",
+        "type": "string"
+      }
     ],
-    name: "createReviewForm",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
+    "name": "CreatedReviewRequest",
+    "type": "event"
   },
   {
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        internalType: "string",
-        name: "_name",
-        type: "string",
-      },
+        "indexed": false,
+        "internalType": "string",
+        "name": "_requestName",
+        "type": "string"
+      }
     ],
-    name: "getRequest",
-    outputs: [
+    "name": "SubmittedReview",
+    "type": "event"
+  },
+  {
+    "inputs": [
       {
-        internalType: "address[]",
-        name: "reviewers",
-        type: "address[]",
-      },
-      {
-        internalType: "string[]",
-        name: "targets",
-        type: "string[]",
-      },
-      {
-        internalType: "string[]",
-        name: "targetsIPFSHashes",
-        type: "string[]",
-      },
-      {
-        internalType: "string",
-        name: "formIpfsHash",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "rewardPerReview",
-        type: "uint256",
-      },
-      {
-        components: [
+        "components": [
           {
-            internalType: "address",
-            name: "reviewer",
-            type: "address",
+            "internalType": "bytes32",
+            "name": "uid",
+            "type": "bytes32"
           },
           {
-            internalType: "uint8",
-            name: "targetIndex",
-            type: "uint8",
+            "internalType": "bytes32",
+            "name": "schema",
+            "type": "bytes32"
           },
           {
-            internalType: "string[]",
-            name: "answers",
-            type: "string[]",
+            "internalType": "uint64",
+            "name": "time",
+            "type": "uint64"
           },
+          {
+            "internalType": "uint64",
+            "name": "expirationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "revocationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "refUID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "attester",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "revocable",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
         ],
-        internalType: "struct DeresyRequests.Review[]",
-        name: "reviews",
-        type: "tuple[]",
-      },
-      {
-        internalType: "uint256",
-        name: "reviewFormIndex",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "isClosed",
-        type: "bool",
-      },
+        "internalType": "struct Attestation",
+        "name": "attestation",
+        "type": "tuple"
+      }
     ],
-    stateMutability: "view",
-    type: "function",
+    "name": "attest",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: "uint256",
-        name: "_reviewFormIndex",
-        type: "uint256",
-      },
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      }
     ],
-    name: "getReviewForm",
-    outputs: [
-      {
-        internalType: "string[]",
-        name: "",
-        type: "string[]",
-      },
-      {
-        internalType: "enum DeresyRequests.QuestionType[]",
-        name: "",
-        type: "uint8[]",
-      },
-      {
-        internalType: "string[][]",
-        name: "choices",
-        type: "string[][]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
+    "name": "closeReviewRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    inputs: [],
-    name: "getReviewRequestsNames",
-    outputs: [
+    "inputs": [],
+    "name": "contractVersion",
+    "outputs": [
       {
-        internalType: "string[]",
-        name: "",
-        type: "string[]",
-      },
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
     ],
-    stateMutability: "view",
-    type: "function",
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [],
-    name: "reviewFormsTotal",
-    outputs: [
+    "inputs": [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
       },
+      {
+        "internalType": "address[]",
+        "name": "reviewers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "hypercertTargetIDs",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "targetsIPFSHashes",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string",
+        "name": "formIpfsHash",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardPerReview",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reviewFormIndex",
+        "type": "uint256"
+      }
     ],
-    stateMutability: "view",
-    type: "function",
+    "name": "createRequest",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: "string",
-        name: "_name",
-        type: "string",
+        "internalType": "bytes32",
+        "name": "easSchemaID",
+        "type": "bytes32"
       },
       {
-        internalType: "uint8",
-        name: "targetIndex",
-        type: "uint8",
+        "internalType": "string[]",
+        "name": "questions",
+        "type": "string[]"
       },
       {
-        internalType: "string[]",
-        name: "answers",
-        type: "string[]",
+        "internalType": "string[][]",
+        "name": "choices",
+        "type": "string[][]"
       },
+      {
+        "internalType": "enum DeresyResolver.QuestionType[]",
+        "name": "questionTypes",
+        "type": "uint8[]"
+      }
     ],
-    name: "submitReview",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    "name": "createReviewForm",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
-];
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      }
+    ],
+    "name": "getRequest",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "reviewers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "hypercertTargetIDs",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "targetsIPFSHashes",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string",
+        "name": "formIpfsHash",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardPerReview",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "reviewer",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hypercertID",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string[]",
+            "name": "answers",
+            "type": "string[]"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "attestationID",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct DeresyResolver.Review[]",
+        "name": "reviews",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reviewFormIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isClosed",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_reviewFormIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "getReviewForm",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      },
+      {
+        "internalType": "enum DeresyResolver.QuestionType[]",
+        "name": "",
+        "type": "uint8[]"
+      },
+      {
+        "internalType": "string[][]",
+        "name": "choices",
+        "type": "string[][]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getReviewRequestsNames",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isPayable",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "uid",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "schema",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "time",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "expirationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "revocationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "refUID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "attester",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "revocable",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct Attestation[]",
+        "name": "attestations",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "values",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "multiAttest",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "uid",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "schema",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "time",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "expirationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "revocationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "refUID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "attester",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "revocable",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct Attestation[]",
+        "name": "attestations",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "values",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "multiRevoke",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "reviewFormsTotal",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "uid",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "schema",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "time",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "expirationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "revocationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "refUID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "attester",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "revocable",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct Attestation",
+        "name": "attestation",
+        "type": "tuple"
+      }
+    ],
+    "name": "revoke",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "version",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
+  }
+]
 
 
 let account;
 let web3;
-const contractAddress = "0x144c0fc5305a267B07BBabEe739706abcC73cd83";
+const contractAddress = "0x59116DbE97DD29bfEf53CC4271cf4B026636cC1B";
 
 const handleAccountsChanged = (accounts) => {
   if (accounts.length === 0) {
