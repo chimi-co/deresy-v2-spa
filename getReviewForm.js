@@ -29,6 +29,9 @@ const getReviewForm = async () => {
             rFormQuestionTypeTd.innerHTML = reviewForm[1][index] == 0 ? 'Text' : reviewForm[1][index] == 1 ? 'Yes/No' : 'Single Choice';
             rFormChoiceTd.innerHTML= reviewForm[2][index].join('<br>');
             rfTbody.appendChild(rFormTr);
+
+            var easSchemaID = document.getElementById('easSchemaID');
+            easSchemaID.innerHTML = `<a href="${easExplorerURL}/schema/view/${reviewForm[3]}" target="_blank">${reviewForm[3]}</a>`;
           });
         } catch {
           var reviewFormInfo = document.getElementById("get-review-form-info")
@@ -100,5 +103,3 @@ window.onload = async function () {
     .getElementById("getReviewFormBtn")
     .addEventListener("click", getReviewForm);
 };
-
-console.log("getReviewForm.js loaded")

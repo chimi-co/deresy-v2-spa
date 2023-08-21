@@ -11,10 +11,13 @@ const submitReview = async () => {
       const contract = new eth.Contract(abi, contractAddress, {
         from: account,
       });
+      const easContract = new eth.Contract(easAbi, easContractAddress, {
+        from: account,
+      });
       const provider = web3.currentProvider.isMetaMask;
       
       const _name = document.getElementById("submit-review-name").value;
-      const submitTargetIndex = document.getElementById("submit-review-target-index").value;
+      const hypercertID = document.getElementById("submit-review-target-index").value;
       const answersValues = [];
       const answers = document.getElementsByClassName('submit-review-answers');
       for(let answer of answers) {
@@ -27,20 +30,38 @@ const submitReview = async () => {
         }
       };
 
-      const validData = validateSubmitReviewFields(_name, submitTargetIndex);
+      const validData = validateSubmitReviewFields(_name, hypercertID);
       
       if(validData) {
-        const data = await contract.methods
-        .submitReview(
-          _name,
-          submitTargetIndex,
-          answersValues,
+        const abi = [
+          { type: 'string', name: 'requestName' },
+          { type: 'uint256', name: 'hypercertID' },
+          { type: 'string[]', name: 'answers' }
+        ];
+        
+        const encodedData = web3.eth.abi.encodeParameters(abi, [_name, parseInt(hypercertID), answersValues]);
+        const decodedData = web3.eth.abi.decodeParameters(abi, encodedData);
+        console.log('decodedData', decodedData);
+
+        const data = await easContract.methods
+        .attest(
+          {
+            schema: "0x03b6ef86b0e3869f07d039a9b38e400bc288c5b437a26a404221863de0f6b513",
+            data: {
+              recipient: "0xbA373b2CF4B25336c8e45431825dd3AEAFBf342d",
+              expirationTime:0,
+              revocable: true,
+              refUID: '0x0000000000000000000000000000000000000000000000000000000000000000',
+              data: encodedData,
+              value: 0
+            }
+          }
           )
           .encodeABI();
-          
+
           const transaction = {
             from: account,
-            to: contractAddress,
+            to: easContractAddress,
             data,
           };
           
@@ -136,7 +157,7 @@ const submitReview = async () => {
             questionsHTML = `<strong>Your address (${account}) is not authorized to submit a review for this request</strong>`;
             document.getElementById("submit-review-questions-wrapper").innerHTML = questionsHTML;
           } else {
-            const requestTargets = reviewRequest.targets;
+            const requestTargets = reviewRequest.hypercertTargetIDs;
             const requestTargetsIpfsHashes = reviewRequest.targetsIPFSHashes;
             const reviewFormIndex = reviewRequest.reviewFormIndex;
             const reviewForm = await contract.methods.getReviewForm(reviewFormIndex).call();
@@ -144,7 +165,7 @@ const submitReview = async () => {
             const questionTypes = reviewForm[1]
             const choices = reviewForm[2]
             
-            questionsHTML = `<label>Target</label><div class="pure-g"><div class="pure-u-20-24"><select id="submit-review-target-index" class="pure-input-1"><option hidden selected value="">Select the target for your review</option><select/></div><div class="pure-u-20-24"><small id="submit-review-target-index-validation" class="validation-error"></small></div></div><div id="target-hash-div" style="display:none"><label>Target IPFS Hash</label><div id="target-ipfs-hash"></div></div>`
+            questionsHTML = `<label>Hypercert ID</label><div class="pure-g"><div class="pure-u-20-24"><select id="submit-review-target-index" class="pure-input-1"><option hidden selected value="">Select a Hypercert ID for your review</option><select/></div><div class="pure-u-20-24"><small id="submit-review-target-index-validation" class="validation-error"></small></div></div><div id="target-hash-div" style="display:none"><label>Target IPFS Hash</label><div id="target-ipfs-hash"></div></div>`
             
             questionTypes.forEach( (questionType,index) => {
               if(questionType == 0) {
@@ -159,7 +180,7 @@ const submitReview = async () => {
             document.getElementById("submit-review-questions-wrapper").innerHTML = questionsHTML;
             const targetIndexSelect = document.getElementById('submit-review-target-index');
             for (let i = 0; i < requestTargets.length; i++) {
-              targetIndexSelect.innerHTML += `<option value="${i}">${requestTargets[i]}</option>`;
+              targetIndexSelect.innerHTML += `<option value="${requestTargets[i]}">${requestTargets[i]}</option>`;
             };
 
             document.getElementById('submit-review-target-index').addEventListener('change', function() {

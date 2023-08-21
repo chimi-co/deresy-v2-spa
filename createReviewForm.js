@@ -35,10 +35,10 @@ const createReviewForm = async () => {
       if(validData && isValidSchemaId) {
         const data = await contract.methods
         .createReviewForm(
+          schemaId,
           questionsValues,
           questionsChoicesValues,
-          questionTypesValues,
-          schemaId
+          questionTypesValues
           )
           .encodeABI();
           

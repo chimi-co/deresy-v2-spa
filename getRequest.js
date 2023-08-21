@@ -9,9 +9,16 @@ const getRequest = async () => {
         const contract = new web3.eth.Contract(abi, contractAddress, {
           from: account,
         });
+        const easContract = new web3.eth.Contract(easAbi, easContractAddress, {
+          from: account,
+        });
         const request = await contract.methods.getRequest(name).call();
         const reviewForm = await contract.methods.getReviewForm(request.reviewFormIndex).call();
-        fillReviewsTable(reviewForm, request);
+        const easAttestations = [];
+        for(const r of request.reviews){
+          easAttestations.push(await easContract.methods.getAttestation(r.attestationID).call());
+        }
+        fillReviewsTable(reviewForm, request, easAttestations);
         fillReviewRequestTable(request);
         fillReviewFormTable(reviewForm);
       }
@@ -21,7 +28,7 @@ const getRequest = async () => {
   }
 };
 
-const fillReviewsTable = (reviewForm, request) => {
+const fillReviewsTable = (reviewForm, request, easAttestations) => {
   var noReviewsDiv = document.getElementById("no-reviews-message");
   document.getElementById("reviews-table-div").style="display:block";
   var reviewsTable = document.getElementById("reviews-table");
@@ -31,6 +38,14 @@ const fillReviewsTable = (reviewForm, request) => {
     reviewsTbody.innerHTML = '';
     var oddTd = true;
     request.reviews.forEach( (review, index) => {
+      const reviewAttestation = easAttestations.find((attestation) => attestation.uid == review.attestationID);
+      const abi = [
+        { type: 'string', name: 'requestName' },
+        { type: 'uint256', name: 'hypercertID' },
+        { type: 'string[]', name: 'answers' }
+      ];
+      const decodedData = web3.eth.abi.decodeParameters(abi, reviewAttestation.data);
+      
       var reviewTr = document.createElement('tr');
       if(oddTd){
         reviewTr.classList.add("pure-table-odd");
@@ -39,10 +54,8 @@ const fillReviewsTable = (reviewForm, request) => {
       var reviewTd = document.createElement('td');
       reviewTr.appendChild(reviewTd);
       let reviewsText = "";
-      reviewsText += `<h3 style="margin:0% !important">Review ${index+1} by (${review.reviewer})</h3><br><strong>Target</strong><br><a href="${request.targets[review.targetIndex]}" target="_blank">${request.targets[review.targetIndex]}</a><br><br><strong>Target IPFS Hash</strong><br><a href="https://ifps.io/ipfs/${request.targetsIPFSHashes[review.targetIndex]}" target="_blank">${request.targetsIPFSHashes[review.targetIndex]}</a><br><br>`
-      console.log('review', review)
-      console.log('reviewForm', reviewForm)
-      review.answers.forEach((answer, index) =>{
+      reviewsText += `<h3 style="margin:0% !important">Review ${index+1} by (${review.reviewer})</h3><br><strong>HypercertID</strong><br><a href="${review.hypercertID}" target="_blank">${review.hypercertID}</a><br><br><strong>Attestation ID: </strong><br><a href="${easExplorerURL}/attestation/view/${review.attestationID}" target="_blank">${review.attestationID}</a><br><br>`
+      decodedData.answers.forEach((answer, index) =>{
         if(reviewForm[1][index] == '0'){
           reviewsText += `<strong>${reviewForm[0][index]}</strong><br><textarea class="textarea-markdown">${answer}</textarea><br><br>`
         } else{
@@ -51,7 +64,6 @@ const fillReviewsTable = (reviewForm, request) => {
       });
       reviewsText += "<br>"
       reviewTd.innerHTML = reviewsText;
-      console.log('reviewsText', reviewsText)
       reviewsTbody.appendChild(reviewTr);
     });
     reviewsTable.style = "display: table; width: 100%;";
@@ -81,13 +93,13 @@ const fillReviewRequestTable = (request) => {
 };
 
 const requestTargetsTdHtml = (request) => {
-  let targets = request.targets;
+  let targets = request.hypercertTargetIDs;
   let targetsHashes = request.targetsIPFSHashes;
   let html = ''
   targets.forEach((target, index) => {
-    html += `<strong>Target ${index + 1} </strong> <br><a href="${target}" target="_blank">${target}</a><br>`
+    html += `<strong>Hypercert ID ${index + 1} </strong> <br><a href="${target}" target="_blank">${target}</a><br>`
     if(targetsHashes[index]){
-      html += `<strong>Target ${index + 1} IPFS Hash </strong><br> <a href="https://ifps.io/ipfs/${targetsHashes[index]}" target="_blank">${targetsHashes[index]}</a><br>`
+      html += `<strong>HypercertID ${index + 1} IPFS Hash </strong><br> <a href="https://ifps.io/ipfs/${targetsHashes[index]}" target="_blank">${targetsHashes[index]}</a><br>`
     }
     html += '<br>'
   })
@@ -112,11 +124,12 @@ const fillReviewFormTable = async (reviewForm) => {
     rfTbody.appendChild(rFormTr);
   });
   const textAreas = document.getElementsByClassName("textarea-markdown");
-  console.log('textAreas', textAreas.length)
   for (let textArea of textAreas) {
     const s = new SimpleMDE({ element: textArea, toolbar: false, spellChecker: false, status: false });
     s.togglePreview();
   }
+  var easSchemaID = document.getElementById('easSchemaID');
+  easSchemaID.innerHTML = `<a href="${easExplorerURL}/schema/view/${reviewForm[3]}" target="_blank">${reviewForm[3]}</a>`;
   reviewFormTable.style = "display: block;margin-top: 5%;";
 };
 

@@ -127,7 +127,7 @@ const createRequest = async () => {
       var validationMessage = target.parentNode.parentNode.querySelector('.validation-error');
       if(target.value){
         if(targetValues.includes(target.value)){
-          validationMessage.innerHTML = "Duplicated target";
+          validationMessage.innerHTML = "Duplicated Hypercert ID";
           validationMessage.style = "display:block";
           validTargets = false;
         } else {
@@ -199,21 +199,21 @@ const createRequest = async () => {
     pureG.appendChild(pureHashField);
     
     var targetLabel = document.createElement('label')
-    targetLabel.innerHTML = "Target"
+    targetLabel.innerHTML = "Hypercert ID"
     var targetInput = document.createElement('input')
     targetInput.className = "pure-input-1"
     targetInput.type = "text"
-    targetInput.placeholder="Enter a target"
+    targetInput.placeholder="Enter a Hypercert ID"
     targetInput.name="targets[]"
     pureLabelTargetField.appendChild(targetLabel)
     pureTargetField.appendChild(targetInput)
 
     var hashLabel = document.createElement('label')
-    hashLabel.innerHTML = "Target IPFS Hash"
+    hashLabel.innerHTML = "Hypercert IPFS Hash"
     var hashInput = document.createElement('input')
     hashInput.className = "pure-input-1"
     hashInput.type = "text"
-    hashInput.placeholder="Enter a target IPFS hash"
+    hashInput.placeholder="Enter a Hypercert IPFS hash"
     hashInput.name="targetsIPFSHashes[]"
     pureLabelHashField.appendChild(hashLabel)
     pureHashField.appendChild(hashInput)
