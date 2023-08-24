@@ -2738,7 +2738,7 @@ const easAbiProd = [
 ];
 const easAbi = ENVIRONMENT === 'development' ? easAbiGoerli : easAbiProd;
 
-const contractAddressGoerli = "0x07F31e460395D982aE803Ee387ca8D5A54A1368d";
+const contractAddressGoerli = "0x1C9e1EEe370beDBdD464CC997Cd252D92A538A1e";
 const contractAddressProd = ""
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 
