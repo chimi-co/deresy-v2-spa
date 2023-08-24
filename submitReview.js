@@ -48,9 +48,9 @@ const submitReview = async () => {
           {
             schema: requestReviewForm[3],
             data: {
-              recipient: "0xbA373b2CF4B25336c8e45431825dd3AEAFBf342d",
-              expirationTime:0,
-              revocable: true,
+              recipient: "0x0000000000000000000000000000000000000000",
+              expirationTime:0n,
+              revocable: false,
               refUID: '0x0000000000000000000000000000000000000000000000000000000000000000',
               data: encodedData,
               value: 0
@@ -74,7 +74,6 @@ const submitReview = async () => {
             alertBox.innerHTML = 'In Progress... <img width="2%" src="spinner.gif"/>';
           })
           .on("receipt", function (receipt) {
-            console.log('receipt', receipt)
             alertBox.classList.remove("error");
             alertBox.classList.remove("info");
             alertBox.classList.add("success");

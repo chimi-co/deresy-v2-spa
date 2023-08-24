@@ -1708,7 +1708,7 @@ const easAbiGoerli = [
     "stateMutability": "view",
     "type": "function"
   }
-]
+];
 const easAbiProd = [
   {
     "inputs": [],
@@ -2738,7 +2738,7 @@ const easAbiProd = [
 ];
 const easAbi = ENVIRONMENT === 'development' ? easAbiGoerli : easAbiProd;
 
-const contractAddressGoerli = "0x622f870068f06BAb228Ce6e5998aE645f82C7099";
+const contractAddressGoerli = "0x1C9e1EEe370beDBdD464CC997Cd252D92A538A1e";
 const contractAddressProd = ""
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 
