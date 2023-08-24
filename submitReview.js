@@ -33,6 +33,8 @@ const submitReview = async () => {
       const validData = validateSubmitReviewFields(_name, hypercertID);
       
       if(validData) {
+        const requestReviewForm = await contract.methods.getRequestReviewForm(_name).call();
+        console.log('requestReviewForm', requestReviewForm)
         const abi = [
           { type: 'string', name: 'requestName' },
           { type: 'uint256', name: 'hypercertID' },
@@ -40,13 +42,11 @@ const submitReview = async () => {
         ];
         
         const encodedData = web3.eth.abi.encodeParameters(abi, [_name, hypercertID, answersValues]);
-        const decodedData = web3.eth.abi.decodeParameters(abi, encodedData);
-        console.log('decodedData', decodedData);
 
         const data = await easContract.methods
         .attest(
           {
-            schema: "0x436e61f178119cc8c5342d5a0dee23afe954843b926e2bf79b502e1c91a42c64",
+            schema: requestReviewForm[3],
             data: {
               recipient: "0xbA373b2CF4B25336c8e45431825dd3AEAFBf342d",
               expirationTime:0,
