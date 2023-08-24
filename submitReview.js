@@ -39,14 +39,14 @@ const submitReview = async () => {
           { type: 'string[]', name: 'answers' }
         ];
         
-        const encodedData = web3.eth.abi.encodeParameters(abi, [_name, parseInt(hypercertID), answersValues]);
+        const encodedData = web3.eth.abi.encodeParameters(abi, [_name, hypercertID, answersValues]);
         const decodedData = web3.eth.abi.decodeParameters(abi, encodedData);
         console.log('decodedData', decodedData);
 
         const data = await easContract.methods
         .attest(
           {
-            schema: "0x03b6ef86b0e3869f07d039a9b38e400bc288c5b437a26a404221863de0f6b513",
+            schema: "0x436e61f178119cc8c5342d5a0dee23afe954843b926e2bf79b502e1c91a42c64",
             data: {
               recipient: "0xbA373b2CF4B25336c8e45431825dd3AEAFBf342d",
               expirationTime:0,
@@ -74,6 +74,7 @@ const submitReview = async () => {
             alertBox.innerHTML = 'In Progress... <img width="2%" src="spinner.gif"/>';
           })
           .on("receipt", function (receipt) {
+            console.log('receipt', receipt)
             alertBox.classList.remove("error");
             alertBox.classList.remove("info");
             alertBox.classList.add("success");
