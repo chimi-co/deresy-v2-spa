@@ -334,6 +334,40 @@ const abiGoerli = [
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      }
+    ],
+    "name": "getRequestReviewForm",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      },
+      {
+        "internalType": "enum DeresyResolver.QuestionType[]",
+        "name": "",
+        "type": "uint8[]"
+      },
+      {
+        "internalType": "string[][]",
+        "name": "choices",
+        "type": "string[][]"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "_reviewFormIndex",
         "type": "uint256"
@@ -2704,7 +2738,7 @@ const easAbiProd = [
 ];
 const easAbi = ENVIRONMENT === 'development' ? easAbiGoerli : easAbiProd;
 
-const contractAddressGoerli = "0x4817c0e9E8E3D6970f330dCA6A9254B9AF174C0e";
+const contractAddressGoerli = "0x622f870068f06BAb228Ce6e5998aE645f82C7099";
 const contractAddressProd = ""
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 
