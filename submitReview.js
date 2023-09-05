@@ -158,6 +158,21 @@ const submitReview = async () => {
             document.getElementById("submit-review-questions-wrapper").innerHTML = questionsHTML;
           } else {
             const requestTargets = reviewRequest.hypercertTargetIDs;
+            const requestTargetsNames = []
+
+            const optimismWeb3 = new Web3("https://optimism-mainnet.infura.io/v3/93cf3e10ca0044cdad4ac63eecdc04fc");
+            for(const hypercertID of requestTargets) {
+              const hypercertContract = new optimismWeb3.eth.Contract(hypercertAbi, hypercertContractAddress, {
+                from: account,
+              });
+              const hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
+              if(hypercertUri){
+                const hypercertData = await (await fetch(`http://ipfs.io/ipfs/${hypercertUri}`)).json();
+                requestTargetsNames.push(hypercertData.name)
+              } else {
+                requestTargetsNames.push(null)
+              }
+            }
             const requestTargetsIpfsHashes = reviewRequest.targetsIPFSHashes;
             const reviewFormIndex = reviewRequest.reviewFormIndex;
             const reviewForm = await contract.methods.getReviewForm(reviewFormIndex).call();
@@ -180,7 +195,7 @@ const submitReview = async () => {
             document.getElementById("submit-review-questions-wrapper").innerHTML = questionsHTML;
             const targetIndexSelect = document.getElementById('submit-review-target-index');
             for (let i = 0; i < requestTargets.length; i++) {
-              targetIndexSelect.innerHTML += `<option value="${requestTargets[i]}">${requestTargets[i]}</option>`;
+              targetIndexSelect.innerHTML += `<option value="${requestTargets[i]}">${requestTargetsNames[i] ? requestTargetsNames[i] : 'Name unavailable'} (ID: ${requestTargets[i]})</option>`;
             };
 
             document.getElementById('submit-review-target-index').addEventListener('change', function() {
