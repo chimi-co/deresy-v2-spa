@@ -3805,7 +3805,7 @@ const easAbiProd = [
 ];
 const easAbi = ENVIRONMENT === 'development' ? easAbiGoerli : easAbiProd;
 
-const contractAddressGoerli = "0x1C9e1EEe370beDBdD464CC997Cd252D92A538A1e";
+const contractAddressGoerli = "0x4407a3D5711d7d242BB39c3F035825A01801a3Fe";
 const contractAddressProd = ""
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 
@@ -3878,7 +3878,7 @@ const getContractVersion = async  () => {
 };
 
 const getHypercertUri = async () => {
-  const optimismWeb3 = new Web3("https://optimism-mainnet.infura.io/v3/93cf3e10ca0044cdad4ac63eecdc04fc");
+  /*const optimismWeb3 = new Web3("https://optimism-mainnet.infura.io/v3/93cf3e10ca0044cdad4ac63eecdc04fc");
   const hypercertContract = new optimismWeb3.eth.Contract(hypercertAbi, hypercertContractAddress, {
     from: account,
   });
@@ -3886,6 +3886,22 @@ const getHypercertUri = async () => {
   console.log(hypercertUri);
   const hypercertData = await (await fetch(`http://ipfs.io/ipfs/${hypercertUri}`)).json();
   console.log('hypercertName', hypercertData.name)
+  */
+ //const hypercertsData = fetch('?query={claims{id}}').then(res => console.log(res))
+ //console.log(hypercertsData)
+ /*fetch('https://api.thegraph.com/subgraphs/name/hypercerts-admin/hypercerts-optimism-mainnet/', {
+  method: 'POST',
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+      query: ` {claims {id}}`
+  })
+  })
+  .then(res => res.json())
+  .then(data => {
+      console.log(data)
+  })
+
+  console.log(response);*/
 }
       
 const detectMetaMask = () => typeof window.ethereum !== "undefined";

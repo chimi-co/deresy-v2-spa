@@ -1,6 +1,12 @@
+const hypercertNames = [];
+
 const getRequest = async () => {
   if (account) {
     try {
+      const optimismWeb3 = new Web3("https://optimism-mainnet.infura.io/v3/93cf3e10ca0044cdad4ac63eecdc04fc");
+      const hypercertContract = new optimismWeb3.eth.Contract(hypercertAbi, hypercertContractAddress, {
+        from: account,
+      });
       const name = document.getElementById("getRequestName").value;
       
       const validData = validateGetRequestFields(name);
@@ -17,7 +23,16 @@ const getRequest = async () => {
         const easAttestations = [];
         for(const r of request.reviews){
           easAttestations.push(await easContract.methods.getAttestation(r.attestationID).call());
+          const hypercertUri = await hypercertContract.methods.uri(r.hypercertID).call();
+          if(hypercertUri){
+            const hypercertData = await (await fetch(`http://ipfs.io/ipfs/${hypercertUri}`)).json();
+            hypercertNames.push(hypercertData.name)
+          } else {
+            hypercertNames.push(null)
+          }
         }
+
+        
         await fillReviewsTable(reviewForm, request, easAttestations);
         await fillReviewRequestTable(request);
         await fillReviewFormTable(reviewForm);
@@ -53,18 +68,8 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
       oddTd = !oddTd;
       var reviewTd = document.createElement('td');
       reviewTr.appendChild(reviewTd);
-      let hypercertName 
-      const optimismWeb3 = new Web3("https://optimism-mainnet.infura.io/v3/93cf3e10ca0044cdad4ac63eecdc04fc");
-      const hypercertContract = new optimismWeb3.eth.Contract(hypercertAbi, hypercertContractAddress, {
-        from: account,
-      });
-      const hypercertUri = await hypercertContract.methods.uri(review.hypercertID).call();
-      if(hypercertUri){
-        const hypercertData = await (await fetch(`http://ipfs.io/ipfs/${hypercertUri}`)).json();
-        hypercertName = hypercertData.name
-      }
       let reviewsText = "";
-      reviewsText += `<h3 style="margin:0% !important">Review ${index+1} by (${review.reviewer})</h3><br><strong>HypercertID</strong><br><a href="${review.hypercertID}" target="_blank">${hypercertName ? `${hypercertName} (ID: ${review.hypercertID})` : `Name Unavailable (ID: ${review.hypercertID})`}</a><br><br><strong>Attestation ID: </strong><br><a href="${easExplorerURL}/attestation/view/${review.attestationID}" target="_blank">${review.attestationID}</a><br><br>`
+      reviewsText += `<h3 style="margin:0% !important">Review ${index+1} by (${review.reviewer})</h3><br><strong>HypercertID</strong><br><a href="${review.hypercertID}" target="_blank">${hypercertNames[index] ? `${hypercertNames[index]} (ID: ${review.hypercertID})` : `Name Unavailable (ID: ${review.hypercertID})`}</a><br><br><strong>Attestation ID: </strong><br><a href="${easExplorerURL}/attestation/view/${review.attestationID}" target="_blank">${review.attestationID}</a><br><br>`
       decodedData.answers.forEach((answer, index) =>{
         if(reviewForm[1][index] == '0'){
           reviewsText += `<strong>${reviewForm[0][index]}</strong><br><textarea class="textarea-markdown">${answer}</textarea><br><br>`
@@ -77,11 +82,6 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
       reviewsTbody.appendChild(reviewTr);
     });
     reviewsTable.style = "display: table; width: 100%;";
-    const textAreas = document.getElementsByClassName("textarea-markdown");
-    for (let textArea of textAreas) {
-      const s = new SimpleMDE({ element: textArea, toolbar: false, spellChecker: false, status: false });
-      s.togglePreview();
-    }
   } else {
     noReviewsDiv.innerHTML = '<strong>There are no available reviews for this request yet</strong>'
     reviewsTable.style = "display:none;"
@@ -112,7 +112,7 @@ const requestTargetsTdHtml = (request) => {
   let targetsHashes = request.targetsIPFSHashes;
   let html = ''
   targets.forEach((target, index) => {
-    html += `<strong>Hypercert ${index + 1} </strong> <br><a href="${target}" target="_blank">${target}</a><br>`
+    html += `<strong>Hypercert ${index + 1} </strong> <br><strong>Name: ${hypercertNames[index] ? hypercertNames[index] : 'Unavailable'}</strong><br/><strong> ID:</strong><a href="${target}" target="_blank">${target}</a><br>`
     if(targetsHashes[index]){
       html += `<strong>HypercertID ${index + 1} IPFS Hash </strong><br> <a href="https://ifps.io/ipfs/${targetsHashes[index]}" target="_blank">${targetsHashes[index]}</a><br>`
     }
@@ -139,6 +139,7 @@ const fillReviewFormTable = async (reviewForm) => {
     rfTbody.appendChild(rFormTr);
   });
   const textAreas = document.getElementsByClassName("textarea-markdown");
+  console.log('textAreas2', textAreas)
   for (let textArea of textAreas) {
     const s = new SimpleMDE({ element: textArea, toolbar: false, spellChecker: false, status: false });
     s.togglePreview();

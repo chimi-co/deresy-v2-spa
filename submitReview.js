@@ -31,17 +31,18 @@ const submitReview = async () => {
       };
 
       const validData = validateSubmitReviewFields(_name, hypercertID);
-      
+      //TODO: Generate PDF IPFS Hash
+      const pdfIpfsHash = "testHash"
       if(validData) {
         const requestReviewForm = await contract.methods.getRequestReviewForm(_name).call();
-        console.log('requestReviewForm', requestReviewForm)
         const abi = [
           { type: 'string', name: 'requestName' },
           { type: 'uint256', name: 'hypercertID' },
-          { type: 'string[]', name: 'answers' }
+          { type: 'string[]', name: 'answers' },
+          { type: 'string', name: 'pdfIpfsHash' },
         ];
         
-        const encodedData = web3.eth.abi.encodeParameters(abi, [_name, hypercertID, answersValues]);
+        const encodedData = web3.eth.abi.encodeParameters(abi, [_name, hypercertID, answersValues, pdfIpfsHash]);
 
         const data = await easContract.methods
         .attest(
