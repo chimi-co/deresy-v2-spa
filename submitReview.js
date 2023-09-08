@@ -31,7 +31,6 @@ const submitReview = async () => {
       };
 
       const validData = validateSubmitReviewFields(_name, hypercertID);
-      //TODO: Generate PDF IPFS Hash
       let pdfIpfsHash = document.getElementById("submit-review-pdf-ipfs-hash").value;
       if(validData) {
         const requestReviewForm = await contract.methods.getRequestReviewForm(_name).call();
@@ -168,7 +167,7 @@ const submitReview = async () => {
               });
               const hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
               if(hypercertUri){
-                const hypercertData = await (await fetch(`http://ipfs.io/ipfs/${hypercertUri}`)).json();
+                const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${hypercertUri}`)).json();
                 requestTargetsNames.push(hypercertData.name)
               } else {
                 requestTargetsNames.push(null)
@@ -193,7 +192,7 @@ const submitReview = async () => {
               }
             });
 
-            questionsHTML += '<label>PDF IPFS Hash</label><div class="pure-g"><div class="pure-u-20-24"><input type="text" id="submit-review-pdf-ipfs-hash" class="pure-input-1" /></div></div><br/>'
+            questionsHTML += '<label>PDF IPFS Hash (optional)</label><div class="pure-g"><div class="pure-u-20-24"><input type="text" id="submit-review-pdf-ipfs-hash" class="pure-input-1" /></div></div><br/>'
 
             document.getElementById("submit-review-questions-wrapper").innerHTML = questionsHTML;
             const targetIndexSelect = document.getElementById('submit-review-target-index');
