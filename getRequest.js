@@ -1,4 +1,4 @@
-const hypercertNames = [];
+const hypercertNames = {};
 
 const getRequest = async () => {
   if (account) {
@@ -23,12 +23,15 @@ const getRequest = async () => {
         const easAttestations = [];
         for(const r of request.reviews){
           easAttestations.push(await easContract.methods.getAttestation(r.attestationID).call());
-          const hypercertUri = await hypercertContract.methods.uri(r.hypercertID).call();
+        }
+
+        for (const hypercertID of request.hypercertTargetIDs) {
+          const hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
           if(hypercertUri){
             const hypercertData = await (await fetch(`http://ipfs.io/ipfs/${hypercertUri}`)).json();
-            hypercertNames.push(hypercertData.name)
+            hypercertNames[hypercertID] = hypercertData.name;
           } else {
-            hypercertNames.push(null)
+            hypercertNames[hypercertID] = null
           }
         }
 
@@ -57,7 +60,8 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
       const abi = [
         { type: 'string', name: 'requestName' },
         { type: 'uint256', name: 'hypercertID' },
-        { type: 'string[]', name: 'answers' }
+        { type: 'string[]', name: 'answers' },
+        { type: 'string', name: 'pdfIpfsHash'}
       ];
       const decodedData = web3.eth.abi.decodeParameters(abi, reviewAttestation.data);
       
@@ -69,7 +73,7 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
       var reviewTd = document.createElement('td');
       reviewTr.appendChild(reviewTd);
       let reviewsText = "";
-      reviewsText += `<h3 style="margin:0% !important">Review ${index+1} by (${review.reviewer})</h3><br><strong>HypercertID</strong><br><a href="${review.hypercertID}" target="_blank">${hypercertNames[index] ? `${hypercertNames[index]} (ID: ${review.hypercertID})` : `Name Unavailable (ID: ${review.hypercertID})`}</a><br><br><strong>Attestation ID: </strong><br><a href="${easExplorerURL}/attestation/view/${review.attestationID}" target="_blank">${review.attestationID}</a><br><br>`
+      reviewsText += `<h3 style="margin:0% !important">Review ${index+1} by (${review.reviewer})</h3><br><strong>HypercertID</strong><br><a href="${HYPERCERTS_BASE_URL}${hypercertContractAddress.toLowerCase()}-${review.hypercertID}" target="_blank">${hypercertNames[review.hypercertID] ? `${hypercertNames[review.hypercertID]} (ID: ${review.hypercertID})` : `Name Unavailable (ID: ${review.hypercertID})`}</a><br><br><strong>Attestation ID: </strong><br><a href="${easExplorerURL}/attestation/view/${review.attestationID}" target="_blank">${review.attestationID}</a>${decodedData.pdfIpfsHash ? `<br><br><strong>PDF IPFS Hash: </strong><br><a href="https://ipfs.io/ipfs/${decodedData.pdfIpfsHash}" target="_blank">${decodedData.pdfIpfsHash}</a><br><br>` : '<br><br>'}`
       decodedData.answers.forEach((answer, index) =>{
         if(reviewForm[1][index] == '0'){
           reviewsText += `<strong>${reviewForm[0][index]}</strong><br><textarea class="textarea-markdown">${answer}</textarea><br><br>`
@@ -112,7 +116,7 @@ const requestTargetsTdHtml = (request) => {
   let targetsHashes = request.targetsIPFSHashes;
   let html = ''
   targets.forEach((target, index) => {
-    html += `<strong>Hypercert ${index + 1} </strong> <br><strong>Name: ${hypercertNames[index] ? hypercertNames[index] : 'Unavailable'}</strong><br/><strong> ID:</strong><a href="${target}" target="_blank">${target}</a><br>`
+    html += `<strong>Hypercert ${index + 1} </strong><br/><a href="${HYPERCERTS_BASE_URL}${hypercertContractAddress.toLowerCase()}-${target}" target="_blank">${hypercertNames[target] ? hypercertNames[target] : 'Name unavailable'}(${target})</a><br>`
     if(targetsHashes[index]){
       html += `<strong>HypercertID ${index + 1} IPFS Hash </strong><br> <a href="https://ifps.io/ipfs/${targetsHashes[index]}" target="_blank">${targetsHashes[index]}</a><br>`
     }
@@ -139,7 +143,6 @@ const fillReviewFormTable = async (reviewForm) => {
     rfTbody.appendChild(rFormTr);
   });
   const textAreas = document.getElementsByClassName("textarea-markdown");
-  console.log('textAreas2', textAreas)
   for (let textArea of textAreas) {
     const s = new SimpleMDE({ element: textArea, toolbar: false, spellChecker: false, status: false });
     s.togglePreview();

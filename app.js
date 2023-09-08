@@ -2,6 +2,8 @@ const ENVIRONMENT = 'development'; // 'development' or 'production'
 
 const OPTIMISM_NETWORK_ID = ENVIRONMENT === 'development' ? 420 : 20;
 
+const HYPERCERTS_BASE_URL = 'https://hypercerts.org/app/view/#claimId=';
+
 const hypercertContractAddress = "0x822F17A9A5EeCFd66dBAFf7946a8071C265D1d07";
 const hypercertAbi = [
   {
@@ -3876,33 +3878,6 @@ const getContractVersion = async  () => {
   const contractVersion = await contract.methods.contractVersion().call();
   document.getElementById('contractVersion').innerHTML = `Version: ${contractVersion}`
 };
-
-const getHypercertUri = async () => {
-  /*const optimismWeb3 = new Web3("https://optimism-mainnet.infura.io/v3/93cf3e10ca0044cdad4ac63eecdc04fc");
-  const hypercertContract = new optimismWeb3.eth.Contract(hypercertAbi, hypercertContractAddress, {
-    from: account,
-  });
-  const hypercertUri = await hypercertContract.methods.uri("10000218199072539564261652963204804198268928").call();
-  console.log(hypercertUri);
-  const hypercertData = await (await fetch(`http://ipfs.io/ipfs/${hypercertUri}`)).json();
-  console.log('hypercertName', hypercertData.name)
-  */
- //const hypercertsData = fetch('?query={claims{id}}').then(res => console.log(res))
- //console.log(hypercertsData)
- /*fetch('https://api.thegraph.com/subgraphs/name/hypercerts-admin/hypercerts-optimism-mainnet/', {
-  method: 'POST',
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-      query: ` {claims {id}}`
-  })
-  })
-  .then(res => res.json())
-  .then(data => {
-      console.log(data)
-  })
-
-  console.log(response);*/
-}
       
 const detectMetaMask = () => typeof window.ethereum !== "undefined";
       
@@ -3915,8 +3890,7 @@ window.onload = async function () {
       await connect();
       ethereum.
       request({ method: "eth_chainId" })
-      .then(handleNetworkMessage)
-      //.then(getHypercertUri);
+      .then(handleNetworkMessage);
     } catch (error) {
       console.log(error);
     }
