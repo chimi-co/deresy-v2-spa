@@ -1,11 +1,14 @@
 const createRequest = async () => {
   if (account) {
+    let createRequestBtn = document.getElementById("createRequestBtn");
+    createRequestBtn.disabled = true;
+
     let alertBox = document.getElementById("create-request-info");
     try {
-      alertBox.innerHTML="";
       alertBox.classList.remove("error");
       alertBox.classList.remove("success");
-      alertBox.classList.remove("info");
+      alertBox.classList.add("info");
+      alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
 
       const { eth } = web3;
       const contract = new eth.Contract(abi, contractAddress, {
@@ -64,23 +67,26 @@ const createRequest = async () => {
             alertBox.innerHTML = "Successful!";
           })
           .on("error", console.error);
-        }
-      } catch (error) {
-        alertBox.classList.remove("warning");
-        alertBox.classList.remove("info");
-        alertBox.classList.remove("success");
-        alertBox.classList.add("error");
-        alertBox.innerHTML = "Error...";
-        if (error.code === 4001) {
-          alertBox.innerHTML = "User rejected transaction...";
-        }
-        if (error.code === -32603) {
-          alertBox.innerHTML = "Caller is not the owner...";
-        }
-        throw error;
       }
+    } catch (error) {
+      createRequestBtn.disabled = false;
+
+      alertBox.classList.remove("warning");
+      alertBox.classList.remove("info");
+      alertBox.classList.remove("success");
+      alertBox.classList.add("error");
+      alertBox.innerHTML = "Error...";
+      if (error.code === 4001) {
+        alertBox.innerHTML = "User rejected transaction...";
+      }
+      if (error.code === -32603) {
+        alertBox.innerHTML = "Caller is not the owner...";
+      }
+      throw error;
     }
-  };
+    createRequestBtn.disabled = false;
+  }
+};
   
   const validateCreateRequestFields = (name, reviewFormIndex, reward) => {
     let validName = false;

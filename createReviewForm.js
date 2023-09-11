@@ -1,11 +1,14 @@
 const createReviewForm = async () => {
   if (account) {
+    let createReviewBtn = document.getElementById("createReviewFormBtn");
+    createReviewBtn.disabled = true;
     let alertBox = document.getElementById("create-review-form-info");
     try {
-      alertBox.innerHTML="";
       alertBox.classList.remove("error");
       alertBox.classList.remove("success");
       alertBox.classList.remove("info");
+      alertBox.classList.add("info");
+      alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
 
       const { eth } = web3;
       const contract = new eth.Contract(abi, contractAddress, {
@@ -42,40 +45,38 @@ const createReviewForm = async () => {
           )
           .encodeABI();
           
-          const transaction = {
-            from: account,
-            to: contractAddress,
-            data,
-          };
-          await web3.eth
-          .sendTransaction(transaction)
-          .on("transactionHash", (txHash) => {
-            alertBox.classList.remove("error");
-            alertBox.classList.remove("success");
-            alertBox.classList.add("info");
-            alertBox.innerHTML = 'In Progress... <img width="2%" src="spinner.gif"/>';
-          })
-          .on("receipt", function (receipt) {
-            alertBox.classList.remove("error");
-            alertBox.classList.remove("info");
-            alertBox.classList.add("success");
-            alertBox.innerHTML = "Successful!";
-          })
-          .on("error", console.error);
-        }
-      } catch (error) {
-        alertBox.classList.remove("warning");
-        alertBox.classList.remove("info");
-        alertBox.classList.remove("success");
-        alertBox.classList.add("error");
-        alertBox.innerHTML = "Error...";
-        if (error.code === 4001) {
-          alertBox.innerHTML = "User rejected transaction...";
-        }
-        throw error;
+        const transaction = {
+          from: account,
+          to: contractAddress,
+          data,
+        };
+        await web3.eth
+        .sendTransaction(transaction)
+        .on("receipt", function (receipt) {
+          alertBox.classList.remove("error");
+          alertBox.classList.remove("info");
+          alertBox.classList.add("success");
+          alertBox.innerHTML = "Successful!";
+        })
+        .on("error", console.error);
       }
+    } catch (error) {
+      createReviewBtn.disabled = false;
+
+      alertBox.classList.remove("warning");
+      alertBox.classList.remove("info");
+      alertBox.classList.remove("success");
+      alertBox.classList.add("error");
+      alertBox.innerHTML = "Error...";
+
+      if (error.code === 4001) {
+        alertBox.innerHTML = "User rejected transaction...";
+      }
+      throw error;
     }
-  };
+    createReviewBtn.disabled = false;
+  }
+};
 
   const validateSchemaId = (schemaId) => {
     const schemaIdRegex = /^0x[a-fA-F0-9]{64}$/

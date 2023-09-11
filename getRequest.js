@@ -2,6 +2,12 @@ const hypercertNames = {};
 
 const getRequest = async () => {
   if (account) {
+    let alertBox = document.getElementById("get-request-info");
+    let getRequestBtn = document.getElementById("getRequestBtn");
+    getRequestBtn.disabled = true;
+    alertBox.classList.add("info");
+    alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
+
     try {
       const optimismWeb3 = new Web3("https://optimism-mainnet.infura.io/v3/93cf3e10ca0044cdad4ac63eecdc04fc");
       const hypercertContract = new optimismWeb3.eth.Contract(hypercertAbi, hypercertContractAddress, {
@@ -41,8 +47,16 @@ const getRequest = async () => {
         await fillReviewFormTable(reviewForm);
       }
     } catch (error) {
+      getRequestBtn.disabled = false;
+      alertBox.classList.remove("info");
+      alertBox.innerHTML = "";
+
       throw error;
     }
+    getRequestBtn.disabled = false;
+    alertBox.classList.remove("info");
+    alertBox.innerHTML = "";
+
   }
 };
 

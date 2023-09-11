@@ -1,11 +1,13 @@
 const closeRequest = async () => {
   if (account) {
+    let closeRequestBtn = document.getElementById("closeRequestBtn");
+    closeRequestBtn.disabled = true;
     let alertBox = document.getElementById("close-request-info");
     try {
-      alertBox.innerHTML="";
       alertBox.classList.remove("error");
       alertBox.classList.remove("success");
-      alertBox.classList.remove("info");
+      alertBox.classList.add("info");
+      alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
 
       const { eth } = web3;
       const contract = new eth.Contract(abi, contractAddress, {
@@ -20,9 +22,11 @@ const closeRequest = async () => {
       if(validData) {
         const isClosed = await isRequestClosed(_name)
         if(isClosed){
-          var nameValidationMessage = document.getElementById("close-request-name-validation");
-          nameValidationMessage.innerHTML = "<strong>This Review Request is already closed.</strong>"
-          nameValidationMessage.style = "display:block";
+          alertBox.classList.remove("warning");
+          alertBox.classList.remove("info");
+          alertBox.classList.remove("success");
+          alertBox.classList.add("error");
+          alertBox.innerHTML = "<strong>This Review Request is already closed.</strong>"
         } else {
           const data = await contract.methods
           .closeReviewRequest(
@@ -38,12 +42,6 @@ const closeRequest = async () => {
             
             await web3.eth
             .sendTransaction(transaction)
-            .on("transactionHash", (txHash) => {
-              alertBox.classList.remove("error");
-              alertBox.classList.remove("success");
-              alertBox.classList.add("info");
-              alertBox.innerHTML = 'In Progress... <img width="2%" src="spinner.gif"/>';
-            })
             .on("receipt", function (receipt) {
               alertBox.classList.remove("error");
               alertBox.classList.remove("info");
@@ -55,6 +53,8 @@ const closeRequest = async () => {
       }
     }
     catch (error) {
+      closeRequestBtn.disabled = false;
+
       alertBox.classList.remove("warning");
       alertBox.classList.remove("info");
       alertBox.classList.remove("success");
@@ -65,6 +65,7 @@ const closeRequest = async () => {
       }
       throw error;
     }
+    closeRequestBtn.disabled = false;
   }
 };
   
