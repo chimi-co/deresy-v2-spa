@@ -78,7 +78,7 @@ const submitReview = async () => {
           .on("error", console.error);
         }
     } catch (error) {
-      submitBtn.disabled = true;
+      submitBtn.disabled = false;
 
       alertBox.classList.remove("warning");
       alertBox.classList.remove("info");
@@ -138,7 +138,13 @@ const submitReview = async () => {
 
   async function getRequestQuestions() {
     if (account) {
+      let getFormBtn = document.getElementById('getRequestQuestionsBtn');
+      let alertBox = document.getElementById("submit-review-info");
       try {
+        alertBox.classList.add("info");
+        alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
+        getFormBtn.disabled = true;
+
         const reviewName = document.getElementById("submit-review-name").value;
         
         const validData = validateGetRequestQuestions(reviewName);
@@ -219,8 +225,15 @@ const submitReview = async () => {
           }
         }
       } catch (error) {
+        alertBox.classList.remove("info");
+        alertBox.innerHTML = "";  
+        getFormBtn.disabled = false;
+
         throw error;
       }
+      alertBox.classList.remove("info");
+      alertBox.innerHTML = "";
+      getFormBtn.disabled = false;
     }
   };
   
