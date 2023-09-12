@@ -1,13 +1,15 @@
 const submitReview = async () => {
   if (account) {
     let submitBtn = document.getElementById("submitReviewBtn");
-    submitBtn.disabled = true;
     let alertBox = document.getElementById("submit-review-info");
+
     try {
       alertBox.classList.remove("error");
       alertBox.classList.remove("success");
       alertBox.classList.add("info");
       alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
+
+      submitBtn.disabled = true;
 
       const { eth } = web3;
       const contract = new eth.Contract(abi, contractAddress, {
@@ -143,6 +145,7 @@ const submitReview = async () => {
       try {
         alertBox.classList.add("info");
         alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
+
         getFormBtn.disabled = true;
 
         const reviewName = document.getElementById("submit-review-name").value;

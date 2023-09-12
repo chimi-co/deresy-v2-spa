@@ -1,14 +1,15 @@
 const createRequest = async () => {
   if (account) {
     let createRequestBtn = document.getElementById("createRequestBtn");
-    createRequestBtn.disabled = true;
-
     let alertBox = document.getElementById("create-request-info");
+
     try {
       alertBox.classList.remove("error");
       alertBox.classList.remove("success");
       alertBox.classList.add("info");
       alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
+
+      createRequestBtn.disabled = true;
 
       const { eth } = web3;
       const contract = new eth.Contract(abi, contractAddress, {

@@ -2,12 +2,13 @@ const getReviewForm = async () => {
   if (account) {
     let alertBox = document.getElementById("get-review-form-info-container");
     let getReviewFormBtn = document.getElementById("getReviewFormBtn");
-    getReviewFormBtn.disabled = true;
-
-    alertBox.classList.add("info");
-    alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
 
     try {
+      alertBox.classList.add("info");
+      alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
+
+      getReviewFormBtn.disabled = true;
+
       const reviewFormIndex = document.getElementById("get-review-form-index").value;
       
       const validData = validateGetReviewFormFields(reviewFormIndex);
@@ -50,12 +51,14 @@ const getReviewForm = async () => {
       
     } catch (error) {
       getReviewFormBtn.disabled = false;
+
       alertBox.classList.remove("info");
       alertBox.innerHTML = "";
 
       throw error;
     }
     getReviewFormBtn.disabled = false;
+
     alertBox.classList.remove("info");
     alertBox.innerHTML = "";
   }

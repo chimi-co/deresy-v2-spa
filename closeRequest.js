@@ -1,13 +1,15 @@
 const closeRequest = async () => {
   if (account) {
     let closeRequestBtn = document.getElementById("closeRequestBtn");
-    closeRequestBtn.disabled = true;
     let alertBox = document.getElementById("close-request-info");
+
     try {
       alertBox.classList.remove("error");
       alertBox.classList.remove("success");
       alertBox.classList.add("info");
       alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
+
+      closeRequestBtn.disabled = true;
 
       const { eth } = web3;
       const contract = new eth.Contract(abi, contractAddress, {
