@@ -189,7 +189,13 @@
       }
 
       .alert.info {
+        display: inline-flex;
+        justify-content: center;
         background-color: #2196F3;
+      }
+
+      .alert.info > span {
+        padding-right: 10px;
       }
 
       .alert.error {

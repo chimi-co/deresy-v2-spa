@@ -1,11 +1,15 @@
 const submitReview = async () => {
   if (account) {
+    let submitBtn = document.getElementById("submitReviewBtn");
     let alertBox = document.getElementById("submit-review-info");
+
     try {
-      alertBox.innerHTML="";
       alertBox.classList.remove("error");
       alertBox.classList.remove("success");
-      alertBox.classList.remove("info");
+      alertBox.classList.add("info");
+      alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
+
+      submitBtn.disabled = true;
 
       const { eth } = web3;
       const contract = new eth.Contract(abi, contractAddress, {
@@ -67,12 +71,6 @@ const submitReview = async () => {
           
           await web3.eth
           .sendTransaction(transaction)
-          .on("transactionHash", (txHash) => {
-            alertBox.classList.remove("error");
-            alertBox.classList.remove("success");
-            alertBox.classList.add("info");
-            alertBox.innerHTML = 'In Progress... <img width="2%" src="spinner.gif"/>';
-          })
           .on("receipt", function (receipt) {
             alertBox.classList.remove("error");
             alertBox.classList.remove("info");
@@ -81,19 +79,22 @@ const submitReview = async () => {
           })
           .on("error", console.error);
         }
-      } catch (error) {
-        alertBox.classList.remove("warning");
-        alertBox.classList.remove("info");
-        alertBox.classList.remove("success");
-        alertBox.classList.add("error");
-        alertBox.innerHTML = "Error...";
-        if (error.code === 4001) {
-          alertBox.innerHTML = "User rejected transaction...";
-        }
-        throw error;
+    } catch (error) {
+      submitBtn.disabled = false;
+
+      alertBox.classList.remove("warning");
+      alertBox.classList.remove("info");
+      alertBox.classList.remove("success");
+      alertBox.classList.add("error");
+      alertBox.innerHTML = "Error...";
+      if (error.code === 4001) {
+        alertBox.innerHTML = "User rejected transaction...";
       }
+      throw error;
     }
-  };
+    submitBtn.disabled = false;
+  }
+};
   
   const validateSubmitReviewFields = (name, targetIndex) => {
     let validName = false;
@@ -139,7 +140,14 @@ const submitReview = async () => {
 
   async function getRequestQuestions() {
     if (account) {
+      let getFormBtn = document.getElementById('getRequestQuestionsBtn');
+      let alertBox = document.getElementById("submit-review-info");
       try {
+        alertBox.classList.add("info");
+        alertBox.innerHTML = '<span>In Progress...</span> <img width="2%" src="spinner.gif"/>';
+
+        getFormBtn.disabled = true;
+
         const reviewName = document.getElementById("submit-review-name").value;
         
         const validData = validateGetRequestQuestions(reviewName);
@@ -220,8 +228,15 @@ const submitReview = async () => {
           }
         }
       } catch (error) {
+        alertBox.classList.remove("info");
+        alertBox.innerHTML = "";  
+        getFormBtn.disabled = false;
+
         throw error;
       }
+      alertBox.classList.remove("info");
+      alertBox.innerHTML = "";
+      getFormBtn.disabled = false;
     }
   };
   
