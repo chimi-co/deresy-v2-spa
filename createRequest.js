@@ -33,18 +33,32 @@ const createRequest = async () => {
       if(validData) {
         const rewardPerReviewToWei = web3.utils.toWei(rewardPerReview.toString(), "ether");
         const total = reviewers.length * targets.length * rewardPerReviewToWei;
+        let data
         
-        const data = await contract.methods
-        .createRequest(
-          _name,
-          reviewersValues,
-          targetsValues,
-          targetsIPFSHashesValues,
-          formIpfsHash,
-          rewardPerReviewToWei,
-          reviewFormIndex,
-          )
-          .encodeABI();
+        if (rewardPerReview > 0) {
+          data = await contract.methods
+                               .createRequest(
+                                _name,
+                                reviewersValues,
+                                targetsValues,
+                                targetsIPFSHashesValues,
+                                formIpfsHash,
+                                rewardPerReviewToWei,
+                                reviewFormIndex,
+                                )
+                               .encodeABI();
+        } else {
+          data = await contract.methods
+                               .createNonPayableRequest(
+                                _name,
+                                reviewersValues,
+                                targetsValues,
+                                targetsIPFSHashesValues,
+                                formIpfsHash,
+                                reviewFormIndex,
+                                )
+                               .encodeABI();
+        }
           
           const transaction = {
             from: account,

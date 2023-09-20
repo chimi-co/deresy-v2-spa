@@ -1146,6 +1146,25 @@ const abiGoerli = [
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "string",
         "name": "_requestName",
@@ -1227,6 +1246,19 @@ const abiGoerli = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "callbackContract",
+    "outputs": [
+      {
+        "internalType": "contract IOnReviewable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "string",
@@ -1266,12 +1298,50 @@ const abiGoerli = [
       },
       {
         "internalType": "uint256[]",
-        "name": "hypercertTargetIDs",
+        "name": "hypercertIDs",
         "type": "uint256[]"
       },
       {
         "internalType": "string[]",
-        "name": "targetsIPFSHashes",
+        "name": "hypercertIPFSHashes",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string",
+        "name": "formIpfsHash",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reviewFormIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "createNonPayableRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "address[]",
+        "name": "reviewers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "hypercertIDs",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "hypercertIPFSHashes",
         "type": "string[]"
       },
       {
@@ -1346,12 +1416,12 @@ const abiGoerli = [
       },
       {
         "internalType": "uint256[]",
-        "name": "hypercertTargetIDs",
+        "name": "hypercertIDs",
         "type": "uint256[]"
       },
       {
         "internalType": "string[]",
-        "name": "targetsIPFSHashes",
+        "name": "hypercertIPFSHashes",
         "type": "string[]"
       },
       {
@@ -1446,12 +1516,12 @@ const abiGoerli = [
     "outputs": [
       {
         "internalType": "string[]",
-        "name": "",
+        "name": "questions",
         "type": "string[]"
       },
       {
         "internalType": "enum DeresyResolver.QuestionType[]",
-        "name": "",
+        "name": "questionTypes",
         "type": "uint8[]"
       },
       {
@@ -1461,7 +1531,7 @@ const abiGoerli = [
       },
       {
         "internalType": "bytes32",
-        "name": "",
+        "name": "easSchemaID",
         "type": "bytes32"
       }
     ],
@@ -1648,6 +1718,26 @@ const abiGoerli = [
   },
   {
     "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "reviewFormsTotal",
     "outputs": [
       {
@@ -1731,6 +1821,32 @@ const abiGoerli = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_callbackContractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setCallbackContract",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "version",
     "outputs": [
@@ -1747,7 +1863,8 @@ const abiGoerli = [
     "stateMutability": "payable",
     "type": "receive"
   }
-];
+]
+
 const abiProd =[];
 const abi = ENVIRONMENT === 'development' ? abiGoerli : abiProd;
 
@@ -3807,7 +3924,7 @@ const easAbiProd = [
 ];
 const easAbi = ENVIRONMENT === 'development' ? easAbiGoerli : easAbiProd;
 
-const contractAddressGoerli = "0x4407a3D5711d7d242BB39c3F035825A01801a3Fe";
+const contractAddressGoerli = "0x3fdfC7d35657d9298A4fdf6A83714AA608530aba";
 const contractAddressProd = ""
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 
