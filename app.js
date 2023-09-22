@@ -1146,6 +1146,77 @@ const abiGoerli = [
     "anonymous": false,
     "inputs": [
       {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "uid",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "schema",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "time",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "expirationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "revocationTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "refUID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "attester",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "revocable",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct Attestation",
+        "name": "_attestation",
+        "type": "tuple"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "_requestName",
+        "type": "string"
+      }
+    ],
+    "name": "OnReviewCallback",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -3924,7 +3995,7 @@ const easAbiProd = [
 ];
 const easAbi = ENVIRONMENT === 'development' ? easAbiGoerli : easAbiProd;
 
-const contractAddressGoerli = "0x3fdfC7d35657d9298A4fdf6A83714AA608530aba";
+const contractAddressGoerli = "0x826948A4D516FBe356023815a5C658dd03fe7cd0";
 const contractAddressProd = ""
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 

@@ -325,7 +325,18 @@ const createRequest = async () => {
       }
     }
   };
-  
+
+  const handlePaidReviewSelection = (event) => {
+    const rewardInput = document.getElementById("rewardPerReview");
+    if (event.target.id === "paidReviewYes") {
+        rewardInput.disabled = false;
+        rewardInput.value = "";
+    } else {
+        rewardInput.disabled = true;
+        rewardInput.value = "0";
+    }
+  };
+
   var prev_onLoad = window.onload;
 
   window.onload = async function () {
@@ -338,4 +349,7 @@ const createRequest = async () => {
     
     document.getElementById("addTargetsBtn").addEventListener("click", addTargetInput);
     document.getElementById("addReviewersBtn").addEventListener("click", addReviewerInput);
+
+    document.getElementById("paidReviewYes").addEventListener("click", handlePaidReviewSelection);
+    document.getElementById("paidReviewNo").addEventListener("click", handlePaidReviewSelection);
   };
