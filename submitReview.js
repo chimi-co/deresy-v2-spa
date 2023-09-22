@@ -165,7 +165,7 @@ const submitReview = async () => {
             questionsHTML = `<strong>Your address (${account}) is not authorized to submit a review for this request</strong>`;
             document.getElementById("submit-review-questions-wrapper").innerHTML = questionsHTML;
           } else {
-            const requestTargets = reviewRequest.hypercertTargetIDs;
+            const requestTargets = reviewRequest.hypercertIDs;
             const requestTargetsNames = []
 
             const optimismWeb3 = new Web3("https://optimism-mainnet.infura.io/v3/93cf3e10ca0044cdad4ac63eecdc04fc");
@@ -181,7 +181,7 @@ const submitReview = async () => {
                 requestTargetsNames.push(null)
               }
             }
-            const requestTargetsIpfsHashes = reviewRequest.targetsIPFSHashes;
+            const requestTargetsIpfsHashes = reviewRequest.hypercertIPFSHashes;
             const reviewFormIndex = reviewRequest.reviewFormIndex;
             const reviewForm = await contract.methods.getReviewForm(reviewFormIndex).call();
             const questions = reviewForm[0]

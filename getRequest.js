@@ -33,7 +33,7 @@ const getRequest = async () => {
           easAttestations.push(await easContract.methods.getAttestation(r.attestationID).call());
         }
 
-        for (const hypercertID of request.hypercertTargetIDs) {
+        for (const hypercertID of request.hypercertIDs) {
           const hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
           if(hypercertUri){
             const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${hypercertUri}`)).json();
@@ -129,8 +129,8 @@ const fillReviewRequestTable = async (request) => {
 };
 
 const requestTargetsTdHtml = (request) => {
-  let targets = request.hypercertTargetIDs
-  let targetsHashes = request.targetsIPFSHashes;
+  let targets = request.hypercertIDs
+  let targetsHashes = request.hypercertIPFSHashes;
   let html = ''
   targets.forEach((target, index) => {
     html += `<strong>Hypercert ${index + 1} </strong><br/><a href="${HYPERCERTS_BASE_URL}${hypercertContractAddress.toLowerCase()}-${target}" target="_blank">${hypercertNames[target] ? hypercertNames[target] : 'Name unavailable'}(${target})</a><br>`

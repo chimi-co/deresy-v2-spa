@@ -33,18 +33,32 @@ const createRequest = async () => {
       if(validData) {
         const rewardPerReviewToWei = web3.utils.toWei(rewardPerReview.toString(), "ether");
         const total = reviewers.length * targets.length * rewardPerReviewToWei;
+        let data
         
-        const data = await contract.methods
-        .createRequest(
-          _name,
-          reviewersValues,
-          targetsValues,
-          targetsIPFSHashesValues,
-          formIpfsHash,
-          rewardPerReviewToWei,
-          reviewFormIndex,
-          )
-          .encodeABI();
+        if (rewardPerReview > 0) {
+          data = await contract.methods
+                               .createRequest(
+                                _name,
+                                reviewersValues,
+                                targetsValues,
+                                targetsIPFSHashesValues,
+                                formIpfsHash,
+                                rewardPerReviewToWei,
+                                reviewFormIndex,
+                                )
+                               .encodeABI();
+        } else {
+          data = await contract.methods
+                               .createNonPayableRequest(
+                                _name,
+                                reviewersValues,
+                                targetsValues,
+                                targetsIPFSHashesValues,
+                                formIpfsHash,
+                                reviewFormIndex,
+                                )
+                               .encodeABI();
+        }
           
           const transaction = {
             from: account,
@@ -311,7 +325,18 @@ const createRequest = async () => {
       }
     }
   };
-  
+
+  const handlePaidReviewSelection = (event) => {
+    const rewardInput = document.getElementById("rewardPerReview");
+    if (event.target.id === "paidReviewYes") {
+        rewardInput.disabled = false;
+        rewardInput.value = "";
+    } else {
+        rewardInput.disabled = true;
+        rewardInput.value = "0";
+    }
+  };
+
   var prev_onLoad = window.onload;
 
   window.onload = async function () {
@@ -324,4 +349,7 @@ const createRequest = async () => {
     
     document.getElementById("addTargetsBtn").addEventListener("click", addTargetInput);
     document.getElementById("addReviewersBtn").addEventListener("click", addReviewerInput);
+
+    document.getElementById("paidReviewYes").addEventListener("click", handlePaidReviewSelection);
+    document.getElementById("paidReviewNo").addEventListener("click", handlePaidReviewSelection);
   };
