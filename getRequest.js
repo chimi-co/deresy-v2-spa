@@ -36,7 +36,8 @@ const getRequest = async () => {
         for (const hypercertID of request.hypercertIDs) {
           const hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
           if(hypercertUri){
-            const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${hypercertUri}`)).json();
+            const sanitizedUri = hypercertUri.replace(/^ipfs:\/\//, '');
+            const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${sanitizedUri}`)).json();
             hypercertNames[hypercertID] = hypercertData.name;
           } else {
             hypercertNames[hypercertID] = null
