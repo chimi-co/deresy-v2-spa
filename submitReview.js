@@ -175,7 +175,8 @@ const submitReview = async () => {
               });
               const hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
               if(hypercertUri){
-                const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${hypercertUri}`)).json();
+                const sanitizedUri = hypercertUri.replace(/^ipfs:\/\//, '');
+                const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${sanitizedUri}`)).json();    
                 requestTargetsNames.push(hypercertData.name)
               } else {
                 requestTargetsNames.push(null)
@@ -231,6 +232,8 @@ const submitReview = async () => {
         alertBox.classList.remove("info");
         alertBox.innerHTML = "";  
         getFormBtn.disabled = false;
+
+        console.log(error);
 
         throw error;
       }
