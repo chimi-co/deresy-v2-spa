@@ -42,7 +42,8 @@ const createRequest = async () => {
         const total = rewardPerReviewToWei.mul(web3.utils.toBN(reviewers.length)).mul(web3.utils.toBN(targets.length));
         let data
 
-        if(tokenContractAddress !== zeroAddress) {
+        // If payment is not in ETH and is a paid transaction.
+        if(tokenContractAddress !== zeroAddress && rewardPerReview > 0) {
           await tokenContract.methods.approve(contractAddress, total).send({ from: account });
         }
 
@@ -343,12 +344,15 @@ const populateReviewFormIndexSelect = async () => {
 
 const handlePaidReviewSelection = (event) => {
   const rewardInput = document.getElementById("rewardPerReview");
+  const paymentInput = document.getElementById("tokenSelect");
   if (event.target.id === "paidReviewYes") {
       rewardInput.disabled = false;
       rewardInput.value = "";
+      paymentInput.disabled = false;
   } else {
       rewardInput.disabled = true;
       rewardInput.value = "0";
+      paymentInput.disabled = true;
   }
 };
 
