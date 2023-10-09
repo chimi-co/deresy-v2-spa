@@ -119,7 +119,7 @@ const fillReviewRequestTable = async (request) => {
     document.getElementById("requestReviewersTd").innerHTML = request.reviewers.join('<br>');
     document.getElementById("requestTargetsTd").innerHTML = requestTargetsTdHtml(request);
     document.getElementById("requestIpfsHashTd").innerHTML = `<a href="https://ifps.io/ipfs/${request.formIpfsHash}" target="_blank">${request.formIpfsHash}</a>`;
-    document.getElementById("requestRewardTd").innerHTML = `${request.rewardPerReview/1000000000000000000} ETH`;
+    document.getElementById("requestRewardTd").innerHTML = `${request.rewardPerReview/1000000000000000000} ${getTokenSymbol(request.paymentTokenAddress)}`;
     document.getElementById("requestClosedTd").innerHTML = request.isClosed ? 'Yes' : 'No';
   } else {
     var requestInfo = document.getElementById("request-info")
@@ -128,6 +128,10 @@ const fillReviewRequestTable = async (request) => {
     document.getElementById("request-table").style = "display: none";
   }
 };
+
+const getTokenSymbol = tokenAddress => {
+  return whitelistedTokenList[tokenAddress] || tokenAddress;
+}
 
 const requestTargetsTdHtml = (request) => {
   let targets = request.hypercertIDs
