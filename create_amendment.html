@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="simplemde.min.css">
+    <script src="simplemde.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="app.css" type="text/css">
+    <script src="app.js" type="text/javascript"></script>
+    <script src="createAmendment.js" type="text/javascript"></script>
+    <title>DERESY</title>
+  </head>
+  <body>
+    <div class="header">
+      <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+        <a class="pure-menu-heading" href="./">DERESY</a>
+  
+        <ul class="pure-menu-list">
+          <li class="pure-menu-item" style="padding-right: 100px;"><div class="pure-menu-text"><strong id="contractVersion"></strong></div></li>
+          <li class="pure-menu-item"><div class="pure-menu-text" id="enableMM"></div></li>
+          <li class="pure-menu-item" style="margin: 0px 20px 0px 10px">
+            <button id="connectBtn" class="pure-button pure-button-primary" style="display:none">Connect</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="content-wrapper">
+      <div class="pure-u-11-12 l-box alert warning" id="network-info" style="display:none;">Please connect to the Optimism Network</div>
+      <div class="pure-g">
+        <div class="pure-u-1 l-box">
+          <form class="pure-form pure-form-stacked">
+            <fieldset>
+              <legend class="form-title">Create Amendment</legend>
+              <div id="create-amendment-div" style="display:none">
+                <label>Review Request Name</label>
+                <div class="pure-g" id="select-review-request">
+                  <div class="pure-u-14-24">
+                    <select class="pure-input-1" id="amendment-review-name" onchange="resetReviews()">
+                      <option selected disabled value="">Select the review request name</option>
+                    </select>
+                  </div>
+                  <div class="pure-u-1-24"></div>
+                  <div class="pure-u-3-24">
+                    <button type="button" style="margin-top:5px" class="pure-button button-warning" id="getRequestReviewsBtn">Get Reviews</button>
+                  </div>
+                  <div class="pure-u-20-24">
+                    <small id="submit-review-name-validation" class="validation-error"></small>
+                  </div>
+                </div>
+                <div id="reviews-select" style="display:none;">
+                  <label>Select a review</label>
+                  <div class="pure-g" id="select-review">
+                    <div class="pure-u-14-24">
+                      <select class="pure-input-1" id="amendment-hypercert-id" onchange="selectedReview()">
+                        <option selected disabled value="">Select the review hypercert ID</option>
+                      </select>
+                    </div>
+                    <div class="pure-u-1-24"></div>
+                    <div class="pure-u-20-24">
+                      <small id="submit-review-name-validation" class="validation-error"></small>
+                    </div>
+                  </div>
+                </div>
+                <div id="send-amendment-wrapper" style="display:none"></div>
+                <div id="send-amendment-btn" style="display: none;">
+                  <button id="createAmendmentBtn" type="button" class="pure-button pure-button-primary" style="margin-top:1%;">Send</button>
+                </div>
+              </div>
+              <div id="no-results-message" style="display: none;"></div>
+            </fieldset>
+          </form>
+        </div>
+        <div class="pure-u-11-12 l-box alert" id="create-amendment-info"></div>
+      </div>
+    </div>
+    <script src="web3.js" type="text/javascript"></script>
+  </body>
+</html>

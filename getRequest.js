@@ -34,9 +34,9 @@ const getRequest = async () => {
         }
 
         for (const hypercertID of request.hypercertIDs) {
-          const hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
+          let hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
           if(hypercertUri){
-            const sanitizedUri = hypercertUri.replace(/^ipfs:\/\//, '');
+            const sanitizedUri = hypercertUri.startsWith('ipfs://') ? hypercertUri.replace('ipfs://', '') : hypercertUri
             const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${sanitizedUri}`)).json();
             hypercertNames[hypercertID] = hypercertData.name;
           } else {
@@ -48,6 +48,7 @@ const getRequest = async () => {
         await fillReviewsTable(reviewForm, request, easAttestations);
         await fillReviewRequestTable(request);
         await fillReviewFormTable(reviewForm);
+        initializeSimpleMDETextAreas();
       }
     } catch (error) {
       getRequestBtn.disabled = false;
@@ -64,7 +65,20 @@ const getRequest = async () => {
   }
 };
 
+const initializeSimpleMDETextAreas = () => {
+  setTimeout(() => {
+    const textAreas = document.getElementsByClassName("textarea-markdown");
+    for (let textArea of textAreas) {
+      const s = new SimpleMDE({ element: textArea, toolbar: false, spellChecker: false, status: false });
+      s.togglePreview();
+    }
+  }, 300);
+};
+
 const fillReviewsTable = async (reviewForm, request, easAttestations) => {
+  const easContract = new web3.eth.Contract(easAbi, easContractAddress, {
+    from: account,
+  });
   var noReviewsDiv = document.getElementById("no-reviews-message");
   document.getElementById("reviews-table-div").style="display:block";
   var reviewsTable = document.getElementById("reviews-table");
@@ -79,7 +93,14 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
         { type: 'string', name: 'requestName' },
         { type: 'uint256', name: 'hypercertID' },
         { type: 'string[]', name: 'answers' },
-        { type: 'string', name: 'pdfIpfsHash'}
+        { type: 'string', name: 'pdfIpfsHash'},
+        { type: 'string[]', name: 'attachmentsIpfsHashes' },
+      ];
+      const amendmentAbi = [
+        { type: 'string', name: 'requestName' },
+        { type: 'uint256', name: 'hypercertID' },
+        { type: 'string', name: 'amendment' },
+        { type: 'string[]', name: 'attachmentsIpfsHashes' },
       ];
       const decodedData = web3.eth.abi.decodeParameters(abi, reviewAttestation.data);
       
@@ -91,15 +112,64 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
       var reviewTd = document.createElement('td');
       reviewTr.appendChild(reviewTd);
       let reviewsText = "";
-      reviewsText += `<h3 style="margin:0% !important">Review ${index+1} by (${review.reviewer})</h3><br><strong>HypercertID</strong><br><a href="${HYPERCERTS_BASE_URL}${hypercertContractAddress.toLowerCase()}-${review.hypercertID}" target="_blank">${hypercertNames[review.hypercertID] ? `${hypercertNames[review.hypercertID]} (ID: ${review.hypercertID})` : `Name Unavailable (ID: ${review.hypercertID})`}</a><br><br><strong>Attestation ID: </strong><br><a href="${easExplorerURL}/attestation/view/${review.attestationID}" target="_blank">${review.attestationID}</a>${decodedData.pdfIpfsHash ? `<br><br><strong>PDF IPFS Hash: </strong><br><a href="https://ipfs.io/ipfs/${decodedData.pdfIpfsHash}" target="_blank">${decodedData.pdfIpfsHash}</a><br><br>` : '<br><br>'}`
+      reviewsText += `
+        <h3 style="margin:0% !important">
+          Review ${index+1} by (${review.reviewer})
+        </h3>
+        <br/>
+        <strong>HypercertID</strong>
+        <br/>
+        <a href="${HYPERCERTS_BASE_URL}${hypercertContractAddress.toLowerCase()}-${review.hypercertID}" target="_blank">
+          ${hypercertNames[review.hypercertID] ? `${hypercertNames[review.hypercertID]} (ID: ${review.hypercertID})` : `Name Unavailable (ID: ${review.hypercertID})`}
+        </a>
+        <br/><br/>
+        <strong>Attestation ID:</strong>
+        <br/>
+        <a href="${easExplorerURL}/attestation/view/${review.attestationID}" target="_blank">
+          ${review.attestationID}
+        </a>
+        ${decodedData.pdfIpfsHash ? `
+          <br/><br/>
+          <strong>PDF IPFS Hash:</strong>
+          <br/>
+          <a href="https://ipfs.io/ipfs/${decodedData.pdfIpfsHash}" target="_blank">
+            ${decodedData.pdfIpfsHash}
+          </a>
+          <br/><br/>` :
+          '<br><br>'
+        }
+      `
       decodedData.answers.forEach((answer, index) =>{
-        if(reviewForm[1][index] == '0'){
-          reviewsText += `<strong>${reviewForm[0][index]}</strong><br><textarea class="textarea-markdown">${answer}</textarea><br><br>`
+        if(reviewForm.questionTypes[index] == '0'){
+          reviewsText += `<strong>${reviewForm.questions[index]}</strong><br><textarea class="textarea-markdown">${answer}</textarea><br><br>`
         } else{
-          reviewsText += `<strong>${reviewForm[0][index]}</strong><br>${answer}<br><br>`
+          reviewsText += `<strong>${reviewForm.questions[index]}</strong><br>${answer}<br><br>`
         }
       });
       reviewsText += "<br>"
+      if (review.amendmentsUIDs.length > 0) {
+        reviewsText += `<strong>Amendments:</strong><br/>`;
+        for (let i = 0; i < review.amendmentsUIDs.length; i++) {
+          const ammendmentUid = review.amendmentsUIDs[i];
+          const ammendment = await easContract.methods.getAttestation(ammendmentUid).call();
+          const decodedData = web3.eth.abi.decodeParameters(amendmentAbi, ammendment.data);
+          reviewsText += `
+            <br/>
+            <strong>Amendment ${i + 1}</strong>
+            <br/>
+            <strong>Amendment Attestation ID:</strong>
+            <br/>
+            <a href="${easExplorerURL}/attestation/view/${ammendmentUid}" target="_blank">
+              ${ammendmentUid}
+            </a>
+            <br/>
+            <strong>Amendment Notes:</strong>
+            <br/>
+            <textarea class="textarea-markdown">${decodedData.amendment}</textarea>
+            <br/><br/>
+          `;
+        }
+      }
       reviewTd.innerHTML = reviewsText;
       reviewsTbody.appendChild(reviewTr);
     });
@@ -151,7 +221,7 @@ const fillReviewFormTable = async (reviewForm) => {
   var reviewFormTable = document.getElementById("review-form-table");
   var rfTbody = document.getElementById('rfTbody');
   rfTbody.innerHTML = '';
-  reviewForm[0].forEach( (question, index) => {
+  reviewForm.questions.forEach( (question, index) => {
     var rFormTr = document.createElement('tr');
     var rFormQuestionTd = document.createElement('td');
     var rFormQuestionTypeTd = document.createElement('td');
@@ -160,17 +230,10 @@ const fillReviewFormTable = async (reviewForm) => {
     rFormTr.appendChild(rFormQuestionTypeTd);
     rFormTr.appendChild(rFormChoiceTd);
     rFormQuestionTd.innerHTML = question;
-    rFormQuestionTypeTd.innerHTML = reviewForm[1][index] == 0 ? 'Text' : reviewForm[1][index] == 1 ? 'Yes/No' : 'Single Choice';
-    rFormChoiceTd.innerHTML= reviewForm[2][index].join('<br>');
+    rFormQuestionTypeTd.innerHTML = reviewForm.questionTypes[index] == 0 ? 'Text' : reviewForm.questionTypes[index] == 1 ? 'Yes/No' : 'Single Choice';
+    rFormChoiceTd.innerHTML= reviewForm.choices[index].join('<br>');
     rfTbody.appendChild(rFormTr);
   });
-  const textAreas = document.getElementsByClassName("textarea-markdown");
-  for (let textArea of textAreas) {
-    const s = new SimpleMDE({ element: textArea, toolbar: false, spellChecker: false, status: false });
-    s.togglePreview();
-  }
-  var easSchemaID = document.getElementById('easSchemaID');
-  easSchemaID.innerHTML = `<a href="${easExplorerURL}/schema/view/${reviewForm[3]}" target="_blank">${reviewForm[3]}</a>`;
   reviewFormTable.style = "display: block;margin-top: 5%;";
 };
 

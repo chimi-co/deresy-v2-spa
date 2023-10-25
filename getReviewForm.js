@@ -25,7 +25,7 @@ const getReviewForm = async () => {
           rfTbody.innerHTML = '';
           document.getElementById("get-review-form-info").style = "display: none";
           reviewFormTable.style = "display: block";
-          reviewForm[0].forEach( (question, index) => {
+          reviewForm.questions.forEach( (question, index) => {
             var rFormTr = document.createElement('tr');
             var rFormQuestionTd = document.createElement('td');
             var rFormQuestionTypeTd = document.createElement('td');
@@ -34,12 +34,9 @@ const getReviewForm = async () => {
             rFormTr.appendChild(rFormQuestionTypeTd);
             rFormTr.appendChild(rFormChoiceTd);
             rFormQuestionTd.innerHTML = question;
-            rFormQuestionTypeTd.innerHTML = reviewForm[1][index] == 0 ? 'Text' : reviewForm[1][index] == 1 ? 'Yes/No' : 'Single Choice';
-            rFormChoiceTd.innerHTML= reviewForm[2][index].join('<br>');
+            rFormQuestionTypeTd.innerHTML = reviewForm.questionTypes[index] == 0 ? 'Text' : reviewForm.questionTypes[index] == 1 ? 'Yes/No' : 'Single Choice';
+            rFormChoiceTd.innerHTML= reviewForm.choices[index].join('<br>');
             rfTbody.appendChild(rFormTr);
-
-            var easSchemaID = document.getElementById('easSchemaID');
-            easSchemaID.innerHTML = `<a href="${easExplorerURL}/schema/view/${reviewForm[3]}" target="_blank">${reviewForm[3]}</a>`;
           });
         } catch {
           var reviewFormInfo = document.getElementById("get-review-form-info")

@@ -84,8 +84,8 @@
       .button-xlarge {
         font-size: 125%;
         width: 30%;
-        padding-top: 2%;
-        padding-bottom: 2%;
+        padding-top: 30px;
+        padding-bottom: 30px;
       }
       
       /*--FORM STYLES--*/

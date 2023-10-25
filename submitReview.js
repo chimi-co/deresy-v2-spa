@@ -37,20 +37,21 @@ const submitReview = async () => {
       const validData = validateSubmitReviewFields(_name, hypercertID);
       let pdfIpfsHash = document.getElementById("submit-review-pdf-ipfs-hash").value;
       if(validData) {
-        const requestReviewForm = await contract.methods.getRequestReviewForm(_name).call();
+        const reviewsSchemaID = await contract.methods.reviewsSchemaID().call();
         const abi = [
           { type: 'string', name: 'requestName' },
           { type: 'uint256', name: 'hypercertID' },
           { type: 'string[]', name: 'answers' },
           { type: 'string', name: 'pdfIpfsHash' },
+          { type: 'string[]', name: 'attachmentsIpfsHashes' },
         ];
         
-        const encodedData = web3.eth.abi.encodeParameters(abi, [_name, hypercertID, answersValues, pdfIpfsHash]);
+        const encodedData = web3.eth.abi.encodeParameters(abi, [_name, hypercertID, answersValues, pdfIpfsHash, []]); //TODO: add attachmentsIpfsHashes
 
         const data = await easContract.methods
         .attest(
           {
-            schema: requestReviewForm[3],
+            schema: reviewsSchemaID,
             data: {
               recipient: "0x0000000000000000000000000000000000000000",
               expirationTime:0n,
@@ -173,9 +174,9 @@ const submitReview = async () => {
               const hypercertContract = new optimismWeb3.eth.Contract(hypercertAbi, hypercertContractAddress, {
                 from: account,
               });
-              const hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
+              let hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
               if(hypercertUri){
-                const sanitizedUri = hypercertUri.replace(/^ipfs:\/\//, '');
+                const sanitizedUri = hypercertUri.startsWith('ipfs://') ? hypercertUri.replace('ipfs://', '') : hypercertUri
                 const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${sanitizedUri}`)).json();    
                 requestTargetsNames.push(hypercertData.name)
               } else {
@@ -185,9 +186,9 @@ const submitReview = async () => {
             const requestTargetsIpfsHashes = reviewRequest.hypercertIPFSHashes;
             const reviewFormIndex = reviewRequest.reviewFormIndex;
             const reviewForm = await contract.methods.getReviewForm(reviewFormIndex).call();
-            const questions = reviewForm[0]
-            const questionTypes = reviewForm[1]
-            const choices = reviewForm[2]
+            const questions = reviewForm.questions;
+            const questionTypes = reviewForm.questionTypes;
+            const choices = reviewForm.choices;
             
             questionsHTML = `<label>Hypercert ID</label><div class="pure-g"><div class="pure-u-20-24"><select id="submit-review-target-index" class="pure-input-1"><option hidden selected value="">Select a Hypercert ID for your review</option><select/></div><div class="pure-u-20-24"><small id="submit-review-target-index-validation" class="validation-error"></small></div></div><div id="target-hash-div" style="display:none"><label>Target IPFS Hash</label><div id="target-ipfs-hash"></div></div>`
             
