@@ -100,10 +100,10 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
         { type: 'string', name: 'requestName' },
         { type: 'uint256', name: 'hypercertID' },
         { type: 'string', name: 'amendment' },
+        { type: 'string', name: 'pdfIpfsHash'},
         { type: 'string[]', name: 'attachmentsIpfsHashes' },
       ];
       const decodedData = web3.eth.abi.decodeParameters(abi, reviewAttestation.data);
-      
       var reviewTr = document.createElement('tr');
       if(oddTd){
         reviewTr.classList.add("pure-table-odd");
@@ -174,8 +174,12 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
             <strong>Amendment Notes:</strong>
             <br/>
             <textarea class="textarea-markdown">${decodedData.amendment}</textarea>
-            <br/><br/>
+            <br/>
           `;
+          if(decodedData.pdfIpfsHash){
+            reviewsText += "<strong>PDF IPFS Hash:</strong><br />"
+            reviewsText += `<a href="${ipfsBaseUrl+decodedData.pdfIpfsHash}">${decodedData.pdfIpfsHash}</a><br/><br/>`
+          };
           if (decodedData.attachmentsIpfsHashes.length > 0) {
             reviewsText += "<strong>Attachments:</strong><br />"
             decodedData.attachmentsIpfsHashes.forEach((attachmentHash, index) =>{
