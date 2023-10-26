@@ -173,6 +173,7 @@ const selectedReview = async () => {
   const sendAmendmentWrapper = document.getElementById("send-amendment-wrapper");
   const sendAmendmentBtn = document.getElementById("send-amendment-btn");
   sendAmendmentWrapper.innerHTML = '<label>Amendment</label><textarea id="amendment-text"></textarea><div class="pure-u-20-24"><small id="create-amendment-validation" class="validation-error" style:"display:none;"></small></div>'
+  sendAmendmentWrapper.innerHTML += '<label>PDF IPFS Hash</label><input class="pure-input-1" type="text" placeholder="Enter PDF IPFS Hash" name="amendment-pdf-ipfs-hash" id="amendment-pdf-ipfs-hash">' 
   sendAmendmentWrapper.innerHTML += '<button class="pure-button button-success" style="display:flex;margin-top: 15px" id="addAttachmentBtn" type="button">Add Attachment</button>'
   sendAmendmentWrapper.innerHTML += '<div id="attachmentsContainer"></div><br/>'
   const amendmentTextArea = document.getElementById("amendment-text");
