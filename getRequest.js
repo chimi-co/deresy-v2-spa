@@ -146,7 +146,15 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
           reviewsText += `<strong>${reviewForm.questions[index]}</strong><br>${answer}<br><br>`
         }
       });
-      reviewsText += "<br>"
+      if (decodedData.attachmentsIpfsHashes.length > 0) {
+        reviewsText += "<strong>Attachments:</strong><br />"
+        decodedData.attachmentsIpfsHashes.forEach((attachmentHash, index) =>{
+          reviewsText += `<a href="${ipfsBaseUrl+attachmentHash}" target="_blank">${ipfsBaseUrl+attachmentHash}</a><br>`
+        });
+      }
+
+      reviewsText += "<br/><br/>"
+
       if (review.amendmentsUIDs.length > 0) {
         reviewsText += `<strong>Amendments:</strong><br/>`;
         for (let i = 0; i < review.amendmentsUIDs.length; i++) {
@@ -168,6 +176,14 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
             <textarea class="textarea-markdown">${decodedData.amendment}</textarea>
             <br/><br/>
           `;
+          if (decodedData.attachmentsIpfsHashes.length > 0) {
+            reviewsText += "<strong>Attachments:</strong><br />"
+            decodedData.attachmentsIpfsHashes.forEach((attachmentHash, index) =>{
+              reviewsText += `<a href="${ipfsBaseUrl+attachmentHash}" target="_blank">${ipfsBaseUrl+attachmentHash}</a><br>`
+            });
+      
+            reviewsText += "<br/><br/>"
+          }
         }
       }
       reviewTd.innerHTML = reviewsText;

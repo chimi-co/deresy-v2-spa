@@ -4404,6 +4404,8 @@ const erc20Abi = [
   }
 ]
 
+const ipfsBaseUrl = "https://ipfs.io/ipfs/"
+
 const zeroAddress = "0x0000000000000000000000000000000000000000"
 
 const contractAddressGoerli = "0xC0637f37585aA7aD83Ff244f974a0aB67297Ecd7";

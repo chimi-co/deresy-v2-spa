@@ -27,6 +27,12 @@ const createAmendment = async () => {
       const request = await contract.methods.getRequest(requestName).call();
       const accountReviews = request.reviews.filter(review => review.reviewer.toLowerCase() == account.toLowerCase());
       const amendmentRefUID = accountReviews.find(review => review.hypercertID == hypercertID).attestationID;
+      const attachmentValues = [];
+      const attachmentInputs = document.querySelectorAll('input[name="attachments[]"]');
+
+      for(let input of attachmentInputs) {
+          attachmentValues.push(input.value);
+      }
       const amendmentAbi = [
         { type: 'string', name: 'requestName' },
         { type: 'uint256', name: 'hypercertID' },
@@ -34,7 +40,7 @@ const createAmendment = async () => {
         { type: 'string[]', name: 'attachmentsIpfsHashes' },
       ];
       
-      const encodedData = web3.eth.abi.encodeParameters(amendmentAbi, [requestName, hypercertID, amendmentText, []]); //TODO: add attachments
+      const encodedData = web3.eth.abi.encodeParameters(amendmentAbi, [requestName, hypercertID, amendmentText, attachmentValues]);
   
       const data = await easContract.methods
       .attest(
@@ -165,6 +171,8 @@ const selectedReview = async () => {
   const sendAmendmentWrapper = document.getElementById("send-amendment-wrapper");
   const sendAmendmentBtn = document.getElementById("send-amendment-btn");
   sendAmendmentWrapper.innerHTML = '<label>Amendment</label><textarea id="amendment-text"></textarea><div class="pure-u-20-24"><small id="create-amendment-validation" class="validation-error" style:"display:none;"></small></div>'
+  sendAmendmentWrapper.innerHTML += '<button class="pure-button button-success" style="display:flex;margin-top: 15px" id="addAttachmentBtn" type="button">Add Attachment</button>'
+  sendAmendmentWrapper.innerHTML += '<div id="attachmentsContainer"></div><br/>'
   const amendmentTextArea = document.getElementById("amendment-text");
   new SimpleMDE({ element: amendmentTextArea, forceSync: true });
   sendAmendmentWrapper.style = "display:block";
@@ -195,3 +203,35 @@ window.onload = async function () {
   document.getElementById("amendment-review-name").addEventListener("onchange", resetReviews);
   document.getElementById("amendment-hypercert-id").addEventListener("onchange", selectedReview);
 };
+
+document.addEventListener('click', function(event) {
+  if (event.target.id === 'addAttachmentBtn') {
+    let attachmentsContainer = document.getElementById("attachmentsContainer");
+    let totalAttachments = attachmentsContainer.getElementsByClassName("attachment-div").length;
+
+    if (totalAttachments < 3) {
+      let div = document.createElement('div');
+      div.classList.add('pure-g', 'attachment-div');
+
+      div.innerHTML = `
+        <div class="pure-u-20-24">
+          <input class="pure-input-1" type="text" placeholder="Enter attachment hash" name="attachments[]">
+        </div>
+        <div class="pure-u-1-6">
+          <button class="button-error pure-button deleteAttachmentBtn" type="button">X</button>
+        </div>
+        <div class="pure-u-20-24">
+          <small class="validation-error"></small>
+        </div>
+      `;
+
+      attachmentsContainer.appendChild(div);
+
+      div.querySelector(".deleteAttachmentBtn").addEventListener('click', function() {
+        attachmentsContainer.removeChild(div);
+      });
+    } else {
+      alert("You can only add up to 3 attachments.");
+    }
+  }
+});

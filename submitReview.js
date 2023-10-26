@@ -33,6 +33,12 @@ const submitReview = async () => {
           answersValues.push(answer.value);
         }
       };
+      const attachmentValues = [];
+      const attachmentInputs = document.querySelectorAll('input[name="attachments[]"]');
+
+      for(let input of attachmentInputs) {
+          attachmentValues.push(input.value);
+      }
 
       const validData = validateSubmitReviewFields(_name, hypercertID);
       let pdfIpfsHash = document.getElementById("submit-review-pdf-ipfs-hash").value;
@@ -45,8 +51,10 @@ const submitReview = async () => {
           { type: 'string', name: 'pdfIpfsHash' },
           { type: 'string[]', name: 'attachmentsIpfsHashes' },
         ];
-        
-        const encodedData = web3.eth.abi.encodeParameters(abi, [_name, hypercertID, answersValues, pdfIpfsHash, []]); //TODO: add attachmentsIpfsHashes
+
+        const encodedData = web3.eth.abi.encodeParameters(
+          abi, [_name, hypercertID, answersValues, pdfIpfsHash, attachmentValues]
+        );
 
         const data = await easContract.methods
         .attest(
@@ -204,6 +212,10 @@ const submitReview = async () => {
 
             questionsHTML += '<label>PDF IPFS Hash (optional)</label><div class="pure-g"><div class="pure-u-20-24"><input type="text" id="submit-review-pdf-ipfs-hash" class="pure-input-1" /></div></div><br/>'
 
+            questionsHTML += '<button class="pure-button button-success" style="margin-top: 15px" id="addAttachmentBtn" type="button">Add Attachment</button>'
+
+            questionsHTML += '<div id="attachmentsContainer"></div><br/>'
+
             document.getElementById("submit-review-questions-wrapper").innerHTML = questionsHTML;
             const targetIndexSelect = document.getElementById('submit-review-target-index');
             for (let i = 0; i < requestTargets.length; i++) {
@@ -328,3 +340,36 @@ const submitReview = async () => {
     document.getElementById("getRequestQuestionsBtn").addEventListener("click", getRequestQuestions);
     document.getElementById("submit-review-name").addEventListener("onchange", resetSubmitQuestions);
   };
+
+  document.addEventListener('click', function(event) {
+    if (event.target.id === 'addAttachmentBtn') {
+      let attachmentsContainer = document.getElementById("attachmentsContainer");
+      let totalAttachments = attachmentsContainer.getElementsByClassName("attachment-div").length;
+
+      if (totalAttachments < 3) {
+        let div = document.createElement('div');
+        div.classList.add('pure-g', 'attachment-div');
+
+        div.innerHTML = `
+          <div class="pure-u-20-24">
+            <input class="pure-input-1" type="text" placeholder="Enter attachment hash" name="attachments[]">
+          </div>
+          <div class="pure-u-1-6">
+            <button class="button-error pure-button deleteAttachmentBtn" type="button">X</button>
+          </div>
+          <div class="pure-u-20-24">
+            <small class="validation-error"></small>
+          </div>
+        `;
+
+        attachmentsContainer.appendChild(div);
+
+        div.querySelector(".deleteAttachmentBtn").addEventListener('click', function() {
+          attachmentsContainer.removeChild(div);
+        });
+      } else {
+        alert("You can only add up to 3 attachments.");
+      }
+    }
+  });
+
