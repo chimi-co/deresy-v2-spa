@@ -2,6 +2,7 @@ const createAmendment = async () => {
   const requestName = document.getElementById("amendment-review-name").value;
   const hypercertID = document.getElementById("amendment-hypercert-id").value;
   const amendmentText = document.getElementById("amendment-text").value;
+  const pdfIpfsHash = document.getElementById("amendment-pdf-ipfs-hash").value;
   let createAmendmentBtn = document.getElementById("createAmendmentBtn");
   let alertBox = document.getElementById("create-amendment-info");
   try{
@@ -37,10 +38,11 @@ const createAmendment = async () => {
         { type: 'string', name: 'requestName' },
         { type: 'uint256', name: 'hypercertID' },
         { type: 'string', name: 'amendment' },
+        { type: 'string', name: 'pdfIpfsHash' },
         { type: 'string[]', name: 'attachmentsIpfsHashes' },
       ];
       
-      const encodedData = web3.eth.abi.encodeParameters(amendmentAbi, [requestName, hypercertID, amendmentText, attachmentValues]);
+      const encodedData = web3.eth.abi.encodeParameters(amendmentAbi, [requestName, hypercertID, amendmentText, pdfIpfsHash, attachmentValues]);
   
       const data = await easContract.methods
       .attest(
