@@ -95,6 +95,12 @@ const createRequest = async () => {
             alertBox.innerHTML = "Successful!";
           })
           .on("error", console.error);
+      } else {
+        alertBox.classList.remove("warning");
+        alertBox.classList.remove("info");
+        alertBox.classList.remove("success");
+        alertBox.classList.add("error");
+        alertBox.innerHTML = "Error...";
       }
     } catch (error) {
       console.log(error);
