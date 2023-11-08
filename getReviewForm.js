@@ -9,9 +9,9 @@ const getReviewForm = async () => {
 
       getReviewFormBtn.disabled = true;
 
-      const reviewFormIndex = document.getElementById("get-review-form-index").value;
+      const reviewFormName = document.getElementById("get-review-form-name").value;
       
-      const validData = validateGetReviewFormFields(reviewFormIndex);
+      const validData = validateGetReviewFormFields(reviewFormName);
       
       if(validData) {
         const contract = new web3.eth.Contract(abi, contractAddress, {
@@ -19,7 +19,7 @@ const getReviewForm = async () => {
         });
         
         try {
-          const reviewForm = await contract.methods.getReviewForm(reviewFormIndex).call();
+          const reviewForm = await contract.methods.getReviewForm(reviewFormName).call();
           var reviewFormTable = document.getElementById("get-review-form-table");
           var rfTbody = document.getElementById('rfTbody');
           rfTbody.innerHTML = '';
@@ -64,7 +64,7 @@ const getReviewForm = async () => {
 const validateGetReviewFormFields = (formIndex) => {
   let validFormIndex = false;
   
-  var formIndexValidationMessage = document.getElementById("get-review-form-index-validation");
+  var formIndexValidationMessage = document.getElementById("get-review-form-name-validation");
   
   if(formIndex) {
     formIndexValidationMessage.style = "display:none";
@@ -78,7 +78,7 @@ const validateGetReviewFormFields = (formIndex) => {
   return validFormIndex;
 };
 
-const populateReviewFormIndexSelect = async () => {
+const populateReviewFormNameSelect = async () => {
   if (account) {
     try {
       const contract = new web3.eth.Contract(abi, contractAddress, {
@@ -88,7 +88,7 @@ const populateReviewFormIndexSelect = async () => {
       const noResultsDiv = document.getElementById("no-results-message");
       const getReviewFormDiv = document.getElementById("get-review-form-div");
       if(rfTotal > 0){
-        const formIndexDropdown = document.getElementById("get-review-form-index");
+        const formIndexDropdown = document.getElementById("get-review-form-name");
         getReviewFormDiv.style = "display:block";
         noResultsDiv.style = "display:none";
         let optionsHTML = ''

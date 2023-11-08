@@ -132,7 +132,7 @@ const validateCreateRequestFields = (name, reviewFormIndex, reward) => {
   let validReward = false;
   
   var nameValidationMessage = document.getElementById("name-validation");
-  var reviewFormIndexValidationMessage = document.getElementById("review-form-index-validation");
+  var reviewFormIndexValidationMessage = document.getElementById("review-form-name-validation");
   var rewardValidationMessage = document.getElementById("reward-validation");
   
   if(name) {
@@ -318,7 +318,7 @@ function removeElement(element) {
   element.remove();
 };
 
-const populateReviewFormIndexSelect = async () => {
+const populateReviewFormNameSelect = async () => {
   if (account) {
     try {
       const contract = new web3.eth.Contract(abi, contractAddress, {
