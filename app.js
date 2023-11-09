@@ -1458,7 +1458,7 @@ const abiGoerli = [
       },
       {
         "internalType": "string",
-        "name": "reviewFormIndex",
+        "name": "reviewFormName",
         "type": "string"
       }
     ],
@@ -1665,6 +1665,19 @@ const abiGoerli = [
         "internalType": "struct DeresyResolver.ReviewForm",
         "name": "reviewForm",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getReviewFormsNames",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
       }
     ],
     "stateMutability": "view",
@@ -4394,7 +4407,7 @@ const ipfsBaseUrl = "https://ipfs.io/ipfs/"
 
 const zeroAddress = "0x0000000000000000000000000000000000000000"
 
-const contractAddressGoerli = "0x64dF385556222b2e7d76D0816887B4917b05c715";
+const contractAddressGoerli = "0x67b14Aa84475436C0918ACE841a00100Dc73447d";
 const contractAddressProd = ""
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 
