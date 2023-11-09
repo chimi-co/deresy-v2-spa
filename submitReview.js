@@ -84,7 +84,10 @@ const submitReview = async () => {
             alertBox.classList.remove("error");
             alertBox.classList.remove("info");
             alertBox.classList.add("success");
-            alertBox.innerHTML = "Successful!";
+            alertBox.innerHTML = "Successful! You're getting redirected to home page...";
+            setTimeout(function() {
+              window.location.href = '/';
+            }, 2500);
           })
           .on("error", console.error);
       } else {
