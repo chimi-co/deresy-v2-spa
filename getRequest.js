@@ -27,7 +27,7 @@ const getRequest = async () => {
           from: account,
         });
         const request = await contract.methods.getRequest(name).call();
-        const reviewForm = await contract.methods.getReviewForm(request.reviewFormIndex).call();
+        const reviewForm = await contract.methods.getReviewForm(request.reviewFormName).call();
         const easAttestations = [];
         for(const r of request.reviews){
           easAttestations.push(await easContract.methods.getAttestation(r.attestationID).call());
@@ -205,7 +205,7 @@ const fillReviewRequestTable = async (request) => {
   if(request.reviewers.length > 0) {
     document.getElementById("request-table").style = "display: block; margin-top: 5%;";
     document.getElementById("request-info").style = "display: none";
-    document.getElementById("requestReviewFormIndexTd").innerHTML = request.reviewFormIndex;
+    document.getElementById("requestReviewFormNameTd").innerHTML = request.reviewFormName;
     document.getElementById("requestReviewersTd").innerHTML = request.reviewers.join('<br>');
     document.getElementById("requestTargetsTd").innerHTML = requestTargetsTdHtml(request);
     document.getElementById("requestIpfsHashTd").innerHTML = `<a href="https://ifps.io/ipfs/${request.formIpfsHash}" target="_blank">${request.formIpfsHash}</a>`;

@@ -132,7 +132,7 @@ const validateCreateRequestFields = (name, reviewFormIndex, reward) => {
   let validReward = false;
   
   var nameValidationMessage = document.getElementById("name-validation");
-  var reviewFormIndexValidationMessage = document.getElementById("review-form-index-validation");
+  var reviewFormIndexValidationMessage = document.getElementById("review-form-name-validation");
   var rewardValidationMessage = document.getElementById("reward-validation");
   
   if(name) {
@@ -318,22 +318,22 @@ function removeElement(element) {
   element.remove();
 };
 
-const populateReviewFormIndexSelect = async () => {
+const populateReviewFormNameSelect = async () => {
   if (account) {
     try {
       const contract = new web3.eth.Contract(abi, contractAddress, {
         from: account,
       });
-      const rfTotal = await contract.methods.reviewFormsTotal().call();
+      const reviewFormNames =  await contract.methods.getReviewFormsNames().call();
       const noResultsDiv = document.getElementById("no-results-message");
       const createRequestDiv = document.getElementById("create-request-div");
-      if(rfTotal > 0) {
+      if(reviewFormNames.length > 0) {
         const formIndexDropdown = document.getElementById("reviewFormIndex");
         createRequestDiv.style = "display:block";
         noResultsDiv.style = "display:none";
         let optionsHTML = ''
-        for (let i = 0; i < rfTotal; i++) {
-          optionsHTML += `<option value="${i}">${i}</option>`;
+        for (const reviewFormName of reviewFormNames) {
+          optionsHTML += `<option value="${reviewFormName}">${reviewFormName}</option>`;
         }
         formIndexDropdown.innerHTML += optionsHTML;
       } else {

@@ -18,6 +18,7 @@ const createReviewForm = async () => {
       });
       const provider = web3.currentProvider.isMetaMask;
       
+      const reviewFormName = document.getElementById('reviewFormName').value;
       const questions = Array.prototype.slice.call(document.getElementsByName('questions[]'));
       const questionsValues = questions.map((o) => o.value);
       const questionTypes = Array.prototype.slice.call(document.getElementsByName('question-types[]'));
@@ -38,6 +39,7 @@ const createReviewForm = async () => {
       if(validData) {
         const data = await contract.methods
         .createReviewForm(
+          reviewFormName,
           questionsValues,
           questionsChoicesValues,
           questionTypesValues
@@ -87,9 +89,22 @@ const validateCreateReviewForm = () => {
   let validQuestions = false;
   let validQuestionTypes = false;
   let validQuestionChoices = true;
+  let validName = true;
   
   let questionFields = document.getElementsByName('questions[]');
-  
+
+  let reviewFormName = document.getElementById('reviewFormName').value;
+  let nameValidationMessage = document.getElementById("name-validation");
+
+  if(reviewFormName) {
+    nameValidationMessage.style = "display:none";
+    validName = true;
+  } else {
+    nameValidationMessage.innerHTML = "This is a required field";
+    nameValidationMessage.style = "display:block";
+    validName = false;
+  }
+
   questionFields.forEach(function(question) {
     var validationMessage = question.parentNode.parentNode.querySelector('.question-validation');
     if(question.value){
@@ -130,7 +145,7 @@ const validateCreateReviewForm = () => {
   });
 
   
-  return validQuestions && validQuestionTypes && validQuestionChoices;
+  return validName && validQuestions && validQuestionTypes && validQuestionChoices;
 };
 
 const questionTypeSelected = (selector, typeValue) => {

@@ -1121,9 +1121,9 @@ const abiGoerli = [
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "_formId",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "_formName",
+        "type": "string"
       }
     ],
     "name": "CreatedReviewForm",
@@ -1409,9 +1409,9 @@ const abiGoerli = [
         "type": "string"
       },
       {
-        "internalType": "uint256",
-        "name": "reviewFormIndex",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "reviewFormName",
+        "type": "string"
       }
     ],
     "name": "createNonPayableRequest",
@@ -1457,9 +1457,9 @@ const abiGoerli = [
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "reviewFormIndex",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "reviewFormName",
+        "type": "string"
       }
     ],
     "name": "createRequest",
@@ -1469,6 +1469,11 @@ const abiGoerli = [
   },
   {
     "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
       {
         "internalType": "string[]",
         "name": "questions",
@@ -1486,13 +1491,7 @@ const abiGoerli = [
       }
     ],
     "name": "createReviewForm",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1581,9 +1580,9 @@ const abiGoerli = [
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "reviewFormIndex",
-            "type": "uint256"
+            "internalType": "string",
+            "name": "reviewFormName",
+            "type": "string"
           },
           {
             "internalType": "string",
@@ -1638,9 +1637,9 @@ const abiGoerli = [
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_reviewFormIndex",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "_reviewFormName",
+        "type": "string"
       }
     ],
     "name": "getReviewForm",
@@ -1666,6 +1665,19 @@ const abiGoerli = [
         "internalType": "struct DeresyResolver.ReviewForm",
         "name": "reviewForm",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getReviewFormsNames",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
       }
     ],
     "stateMutability": "view",
@@ -1919,19 +1931,6 @@ const abiGoerli = [
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "reviewFormsTotal",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -4408,7 +4407,7 @@ const ipfsBaseUrl = "https://ipfs.io/ipfs/"
 
 const zeroAddress = "0x0000000000000000000000000000000000000000"
 
-const contractAddressGoerli = "0x6BF34C934EA7389bD75eeC023045d329bB1cA7C0";
+const contractAddressGoerli = "0x67b14Aa84475436C0918ACE841a00100Dc73447d";
 const contractAddressProd = ""
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 
@@ -4444,10 +4443,10 @@ const handleAccountsChanged = (accounts) => {
       document.getElementById("connectBtn").style = "display: none";
       var pathname = window.location.pathname.split("/").pop()
       if(pathname == 'create_request.html'){
-        populateReviewFormIndexSelect();
+        populateReviewFormNameSelect();
         updateTokenOptions();
       } else if(pathname == 'get_review_form.html') {
-        populateReviewFormIndexSelect();
+        populateReviewFormNameSelect();
       } else if(pathname == 'submit_review.html' || pathname == 'get_request.html' || pathname == 'close_request.html' || pathname == 'create_amendment.html'){
         populateReviewRequestNameSelect();
       }

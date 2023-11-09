@@ -198,8 +198,8 @@ const submitReview = async () => {
               }
             }
             const requestTargetsIpfsHashes = reviewRequest.hypercertIPFSHashes;
-            const reviewFormIndex = reviewRequest.reviewFormIndex;
-            const reviewForm = await contract.methods.getReviewForm(reviewFormIndex).call();
+            const reviewFormName = reviewRequest.reviewFormName;
+            const reviewForm = await contract.methods.getReviewForm(reviewFormName).call();
             const questions = reviewForm.questions;
             const questionTypes = reviewForm.questionTypes;
             const choices = reviewForm.choices;
