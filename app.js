@@ -1711,6 +1711,19 @@ const abiGoerli = [
   },
   {
     "inputs": [],
+    "name": "hypercertContract",
+    "outputs": [
+      {
+        "internalType": "contract IHypercertable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "isPayable",
     "outputs": [
       {
@@ -2046,12 +2059,38 @@ const abiGoerli = [
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_hypercertContractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setHypercertContract",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "_reviewsSchemaID",
         "type": "bytes32"
       }
     ],
     "name": "setReviewsSchemaID",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "_validateHypercertIDs",
+        "type": "bool"
+      }
+    ],
+    "name": "setValidateHypercertIDs",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2087,6 +2126,19 @@ const abiGoerli = [
     "name": "unwhitelistToken",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "validateHypercertIDs",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -4407,7 +4459,7 @@ const ipfsBaseUrl = "https://ipfs.io/ipfs/"
 
 const zeroAddress = "0x0000000000000000000000000000000000000000"
 
-const contractAddressGoerli = "0x67b14Aa84475436C0918ACE841a00100Dc73447d";
+const contractAddressGoerli = "0xd7b16CF06D18ADB83007129b3A0eCce2D29B8EFC";
 const contractAddressProd = ""
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 
