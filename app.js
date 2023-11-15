@@ -1,6 +1,6 @@
-const ENVIRONMENT = 'development'; // 'development' or 'production'
+const ENVIRONMENT = 'production'; // 'development' or 'production'
 
-const OPTIMISM_NETWORK_ID = ENVIRONMENT === 'development' ? 420 : 20;
+const OPTIMISM_NETWORK_ID = ENVIRONMENT === 'development' ? 420 : 10;
 
 const HYPERCERTS_BASE_URL = 'https://hypercerts.org/app/view/#claimId=';
 
