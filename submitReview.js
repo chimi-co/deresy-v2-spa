@@ -194,8 +194,15 @@ const submitReview = async () => {
               let hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
               if(hypercertUri){
                 const sanitizedUri = hypercertUri.startsWith('ipfs://') ? hypercertUri.replace('ipfs://', '') : hypercertUri
-                const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${sanitizedUri}`)).json();    
-                requestTargetsNames.push(hypercertData.name)
+                let hypercertData 
+                let hypercertFetchedData = await fetch(`https://${sanitizedUri}.ipfs.4everland.io/`);
+                try {
+                  hypercertData = await hypercertFetchedData.json()
+                  requestTargetsNames.push(hypercertData.name)
+                } catch (error) {
+                  requestTargetsNames.push("Name unavailable")
+                  console.log(error)
+                }    
               } else {
                 requestTargetsNames.push(null)
               }

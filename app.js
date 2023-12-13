@@ -5559,18 +5559,16 @@ const erc20Abi = [
       "name": "Transfer",
       "type": "event"
   }
-]
+];
 
-const ipfsBaseUrl = "https://ipfs.io/ipfs/"
-
-const zeroAddress = "0x0000000000000000000000000000000000000000"
+const zeroAddress = "0x0000000000000000000000000000000000000000";
 
 const contractAddressGoerli = "0xd7b16CF06D18ADB83007129b3A0eCce2D29B8EFC";
 const contractAddressProd = "0x039F0F6229C7f4e9Ec295d4C7a10561010f61fC3"
 const contractAddress = ENVIRONMENT === 'development' ? contractAddressGoerli : contractAddressProd;
 
-const easContractAddressGoerli = "0x4200000000000000000000000000000000000021"
-const easContractAddressProd = "0x4200000000000000000000000000000000000021"
+const easContractAddressGoerli = "0x4200000000000000000000000000000000000021";
+const easContractAddressProd = "0x4200000000000000000000000000000000000021";
 const easContractAddress = ENVIRONMENT === 'development' ? easContractAddressGoerli : easContractAddressProd;
 
 const easExplorerURLGoerli="https://optimism-goerli-bedrock.easscan.org";
@@ -5584,7 +5582,7 @@ const whitelistedTokenList = {
   "0x4200000000000000000000000000000000000042": "OP",
   "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85": "USDC",
   "0x1EBA7a6a72c894026Cd654AC5CDCF83A46445B08": "GTC",
-}
+};
 
 let account;
 let web3;
@@ -5637,7 +5635,7 @@ const handleNetworkMessage = (chainId) => {
   if(chainId == OPTIMISM_NETWORK_ID) {
     networkAlert.style = "display:none";
   } else {
-    networkAlert.style = "display:block"
+    networkAlert.style = "display:block";
   }
 };
 
@@ -5646,7 +5644,7 @@ const getContractVersion = async  () => {
     from: account,
   });
   const contractVersion = await contract.methods.contractVersion().call();
-  document.getElementById('contractVersion').innerHTML = `Version: ${contractVersion}`
+  document.getElementById('contractVersion').innerHTML = `Version: ${contractVersion}`;
 };
       
 const detectMetaMask = () => typeof window.ethereum !== "undefined";

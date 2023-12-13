@@ -149,7 +149,7 @@ const populateReviewsSelect = async () => {
           let hypercertUri = await hypercertContract.methods.uri(accountReviews[i].hypercertID).call();
           if(hypercertUri){
             const sanitizedUri =hypercertUri.startsWith('ipfs://') ? hypercertUri.replace('ipfs://', '') : hypercertUri
-            const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${sanitizedUri}`)).json();
+            const hypercertData = await (await fetch(`https://${sanitizedUri}.ipfs.4everland.io/`)).json();
             if(hypercertData && hypercertData.name){
               hypercertName = hypercertData.name;
             } else {

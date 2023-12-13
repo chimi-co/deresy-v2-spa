@@ -32,13 +32,20 @@ const getRequest = async () => {
         for(const r of request.reviews){
           easAttestations.push(await easContract.methods.getAttestation(r.attestationID).call());
         }
-
+        
         for (const hypercertID of request.hypercertIDs) {
           let hypercertUri = await hypercertContract.methods.uri(hypercertID).call();
           if(hypercertUri){
             const sanitizedUri = hypercertUri.startsWith('ipfs://') ? hypercertUri.replace('ipfs://', '') : hypercertUri
-            const hypercertData = await (await fetch(`https://ipfs.io/ipfs/${sanitizedUri}`)).json();
-            hypercertNames[hypercertID] = hypercertData.name;
+            let hypercertData 
+            let hypercertFetchedData = await fetch(`https://${sanitizedUri}.ipfs.4everland.io/`);
+            try{
+              hypercertData = await hypercertFetchedData.json();
+              hypercertNames[hypercertID] = hypercertData.name;
+            } catch(error){
+              hypercertNames[hypercertID] = "Name Unavailable"
+              console.log(error)
+            }
           } else {
             hypercertNames[hypercertID] = null
           }
@@ -132,7 +139,7 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
           <br/><br/>
           <strong>PDF IPFS Hash:</strong>
           <br/>
-          <a href="https://ipfs.io/ipfs/${decodedData.pdfIpfsHash}" target="_blank">
+          <a href="https://${decodedData.pdfIpfsHash}.ipfs.4everland.io/" target="_blank">
             ${decodedData.pdfIpfsHash}
           </a>
           <br/><br/>` :
@@ -149,7 +156,7 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
       if (decodedData.attachmentsIpfsHashes.length > 0) {
         reviewsText += "<strong>Attachments:</strong><br />"
         decodedData.attachmentsIpfsHashes.forEach((attachmentHash, index) =>{
-          reviewsText += `<a href="${ipfsBaseUrl+attachmentHash}" target="_blank">${ipfsBaseUrl+attachmentHash}</a><br>`
+          reviewsText += `<a href="${attachmentHash}.ipfs.4everland.io/" target="_blank">${attachmentHash}</a><br>`
         });
       }
 
@@ -178,12 +185,12 @@ const fillReviewsTable = async (reviewForm, request, easAttestations) => {
           `;
           if(decodedData.pdfIpfsHash){
             reviewsText += "<strong>PDF IPFS Hash:</strong><br />"
-            reviewsText += `<a href="${ipfsBaseUrl+decodedData.pdfIpfsHash}">${decodedData.pdfIpfsHash}</a><br/><br/>`
+            reviewsText += `<a href="${decodedData.pdfIpfsHash}.ipfs.4everland.io/">${decodedData.pdfIpfsHash}</a><br/><br/>`
           };
           if (decodedData.attachmentsIpfsHashes.length > 0) {
             reviewsText += "<strong>Attachments:</strong><br />"
             decodedData.attachmentsIpfsHashes.forEach((attachmentHash, index) =>{
-              reviewsText += `<a href="${ipfsBaseUrl+attachmentHash}" target="_blank">${ipfsBaseUrl+attachmentHash}</a><br>`
+              reviewsText += `<a href="${attachmentHash}.ipfs.4everland.io/" target="_blank">${attachmentHash}</a><br>`
             });
       
             reviewsText += "<br/><br/>"
